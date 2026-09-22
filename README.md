@@ -33,36 +33,6 @@ Plataforma integral de gestión y control de inventarios desarrollada a medida p
 
 ---
 
-## 💻 Ejecución de la Aplicación Web
-
-### 1. Iniciar en Modo de Desarrollo
-Abre una terminal en la carpeta del proyecto y ejecuta:
-```bash
-npm run dev
-```
-La aplicación iniciará automáticamente en:
-👉 `http://localhost:3000`
-
-### 2. Generar Build de Producción
-```bash
-npm run build
-```
-
----
-
-## 🗄️ Base de Datos en SQL Server Management Studio (SSMS)
-
-El script SQL completo y autoejecutable se encuentra en:
-📁 `database/01_CREATE_DATABASE_MARTIN.sql`
-
-### Pasos para ejecutar en SSMS:
-1. Conéctate a tu instancia de **SQL Server** en SSMS (`localhost`, `.` o `.\SQLEXPRESS`).
-2. Abre el archivo `database/01_CREATE_DATABASE_MARTIN.sql` (`Ctrl + O`).
-3. Ejecuta el script (`F5`).
-4. Se creará la base de datos `RepresentacionesMartinDB` con 15 tablas normalizadas, triggers de actualización de Kardex, stored procedures (`sp_RegistrarMovimiento`, `sp_AjusteInventarioManual`, `sp_GenerarCierreDiario`, `sp_CalcularRotacionABC`), vistas de almacén y datos semilla madereros.
-
----
-
 ## 👤 Cuentas de Acceso Preconfiguradas (Demostración RBAC)
 
 Puedes alternar entre estos perfiles desde el selector **"Simular Rol"** en la barra superior (Navbar):
