@@ -7,6 +7,7 @@ import { ProductModel } from '../models/ProductModel.js';
 import { MovementModel, MovementType } from '../models/MovementModel.js';
 import { AdjustmentModel, AdjustmentTypes } from '../models/AdjustmentModel.js';
 import { OrderModel } from '../models/OrderModel.js';
+import { randomDigits } from '../utils/random.js';
 
 export const InventoryController = {
   /**
@@ -44,7 +45,7 @@ export const InventoryController = {
       return { success: false, message: validation.errors.join(' ') };
     }
 
-    const docRef = comprobante?.trim() || `BV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const docRef = comprobante?.trim() || `BV-${new Date().getFullYear()}-${randomDigits(4)}`;
     const obsText = `Venta a cliente: ${cliente?.trim() || 'Público General'}. ${observacion?.trim() || ''}`.trim();
 
     // 2. Generar el registro de movimiento y nuevo stock
@@ -167,7 +168,7 @@ export const InventoryController = {
     }
 
     const qty = Number(cantidadAjuste);
-    const folio = `AJU-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(100 + Math.random() * 900)}`;
+    const folio = `AJU-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${randomDigits(3)}`;
 
     let tipoMov = MovementType.MERMA;
     if (tipoAjuste === AdjustmentTypes.FALTANTE) tipoMov = MovementType.AJUSTE_NEGATIVO;

@@ -1,3 +1,4 @@
+import { randomDigits } from '../../utils/random';
 import React, { useState, useEffect } from 'react';
 import { useInventory } from '../../context/InventoryContext';
 import { X, Save, Package, Layers, MapPin, DollarSign, Scale } from 'lucide-react';
@@ -49,8 +50,8 @@ export const ProductModal = ({ isOpen, onClose, productToEdit }) => {
     } else {
       // Valores por defecto para nuevo producto
       setFormData({
-        sku: 'MEL-NUE-' + Math.floor(100 + Math.random() * 900),
-        codigoBarras: '775' + Math.floor(1000000000 + Math.random() * 9000000000),
+        sku: 'MEL-NUE-' + randomDigits(3),
+        codigoBarras: '775' + randomDigits(10),
         nombre: '',
         descripcion: '',
         categoriaId: '1',

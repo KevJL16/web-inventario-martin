@@ -1,3 +1,4 @@
+import { randomDigits } from '../../utils/random';
 import React, { useState } from 'react';
 import { useInventory } from '../../context/InventoryContext';
 import { useAuth } from '../../context/AuthContext';
@@ -48,7 +49,7 @@ export const MovimientosView = () => {
       tipo: 'ENTRADA_COMPRA',
       cantidad: '10',
       costoUnitario: prod ? String(prod.costoCompra) : '0',
-      comprobante: `GR-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      comprobante: `GR-${new Date().getFullYear()}-${randomDigits(4)}`,
       observacion: ''
     });
     setModalOpen(true);

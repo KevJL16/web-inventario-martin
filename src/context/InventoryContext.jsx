@@ -14,6 +14,7 @@ import { StorageModel } from '../models/StorageModel';
 import { InventoryController } from '../controllers/InventoryController';
 import { useAuth } from './AuthContext';
 import { apiFetch } from '../services/api';
+import { randomDigits } from '../utils/random';
 
 const InventoryContext = createContext();
 
@@ -273,7 +274,7 @@ export const InventoryProvider = ({ children }) => {
   // RF-13: Crear Orden de Compra
   const createPurchaseOrder = (orderData) => {
     const sup = suppliers.find(s => s.id === Number(orderData.proveedorId)) || suppliers[0];
-    const folio = `OC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const folio = `OC-${new Date().getFullYear()}-${randomDigits(4)}`;
 
     const items = orderData.items.map(item => {
       const p = products.find(prod => prod.id === Number(item.productoId));
