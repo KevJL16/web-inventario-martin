@@ -11,6 +11,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test-db": "node server/testConnection.js",
+    "test-db:azure": "node --env-file=server/.env.azure server/testConnection.js",
+    "set-password:azure": "node --env-file=server/.env.azure server/setPassword.js",
     "server": "node server/server.js",
     "set-password": "node server/setPassword.js"
   },
