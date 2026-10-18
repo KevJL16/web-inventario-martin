@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# Sistema-web-de-control-de-inventario---MARTIN
-=======
 # Sistema de Control de Inventarios - "Representaciones Martín"
 
 Plataforma integral de gestión y control de inventarios desarrollada a medida para **Representaciones Martín**, empresa especializada en la comercialización de tableros de melamina, drywall, pisos laminados/vinílicos, herrajes industriales y muebles modulados.
