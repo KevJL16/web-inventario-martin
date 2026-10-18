@@ -32,9 +32,17 @@ BEGIN
 END
 ELSE IF USER_ID('martin_app') IS NULL
 BEGIN
-    DECLARE @Sql NVARCHAR(400) = N'CREATE USER martin_app WITH PASSWORD = ' + QUOTENAME(@Password, '''') + N';';
-    EXEC (@Sql);
-    PRINT 'Usuario martin_app creado.';
+    BEGIN TRY
+        DECLARE @Sql NVARCHAR(400) = N'CREATE USER martin_app WITH PASSWORD = ' + QUOTENAME(@Password, '''') + N';';
+        EXEC (@Sql);
+        PRINT 'Usuario martin_app creado.';
+    END TRY
+    BEGIN CATCH
+        -- Sin usuario no tiene sentido aplicar permisos: se detiene el resto del script
+        DECLARE @Error NVARCHAR(2048) = ERROR_MESSAGE();
+        RAISERROR('No se pudo crear martin_app: %s', 16, 1, @Error);
+        SET NOEXEC ON;
+    END CATCH
 END
 ELSE
 BEGIN
