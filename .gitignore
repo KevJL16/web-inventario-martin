@@ -1,6 +1,12 @@
 # Node.js
 node_modules/
 
+# Build de Vite (Vercel lo genera en cada despliegue)
+dist/
+
+# Vercel CLI
+.vercel/
+
 # Variables de entorno (credenciales)
 .env
 .env.*
