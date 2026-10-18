@@ -3,7 +3,7 @@
 // "Representaciones Martín" - RepresentacionesMartinDB
 // ============================================================================
 
-import sql from 'mssql';
+import { getPool } from './db.js';
 import { dbConfig } from './config.js';
 
 async function testConnection() {
@@ -13,7 +13,7 @@ async function testConnection() {
 
   try {
     // Credenciales leídas de server/.env (ver server/config.js)
-    const pool = await sql.connect(dbConfig);
+    const pool = await getPool();
 
     console.log('✅ ¡CONEXIÓN EXITOSA A SQL SERVER!');
     console.log(`   Instancia: ${dbConfig.server}:${dbConfig.port}`);

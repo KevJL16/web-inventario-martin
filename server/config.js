@@ -39,6 +39,9 @@ export const dbConfig = {
   user: required('DB_USER'),
   password: required('DB_PASSWORD'),
   database: required('DB_NAME'),
+  // Azure SQL serverless puede tardar en reactivarse tras una pausa
+  connectionTimeout: Number(process.env.DB_CONNECTION_TIMEOUT_MS) || 30000,
+  requestTimeout: Number(process.env.DB_REQUEST_TIMEOUT_MS) || 30000,
   options: {
     encrypt: process.env.DB_ENCRYPT === 'true',
     trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE !== 'false',
