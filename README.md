@@ -109,8 +109,8 @@ El proyecto se despliega como **un solo proyecto de Vercel**: el frontend (Vite)
 | :--- | :--- |
 | `DB_SERVER` | `tu-servidor.database.windows.net` |
 | `DB_PORT` | `1433` |
-| `DB_USER` | usuario de la BD |
-| `DB_PASSWORD` | contraseña de la BD |
+| `DB_USER` | `martin_app` (creado con `database/02_USUARIO_APP_AZURE.sql`) |
+| `DB_PASSWORD` | la contraseña que pusiste a `martin_app` |
 | `DB_NAME` | `RepresentacionesMartinDB` |
 | `DB_ENCRYPT` | `true` (obligatorio en Azure SQL) |
 | `DB_TRUST_SERVER_CERTIFICATE` | `false` |
