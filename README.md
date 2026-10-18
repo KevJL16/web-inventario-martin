@@ -61,15 +61,19 @@ npm run build
 
 ## 🗄️ Base de Datos en SQL Server Management Studio (SSMS)
 
-El script SQL completo y autoejecutable se encuentra en:
-📁 `database/01_CREATE_DATABASE_MARTIN.sql`
+Los scripts están en `database/`:
+- 📁 `00_CREAR_BD_LOCAL.sql`: crea la base de datos vacía (**solo SQL Server local**; borra la existente).
+- 📁 `01_ESQUEMA_Y_DATOS.sql`: tablas, procedimientos, vistas y datos semilla. Funciona en local y en **Azure SQL Database**.
+- 📁 `02_USUARIO_APP_AZURE.sql`: usuario de la aplicación con permisos mínimos (Azure SQL).
 
-### Pasos para ejecutar en SSMS:
+### Pasos para ejecutar en SSMS (local):
 1. Conéctate a tu instancia de **SQL Server** en SSMS (`localhost`, `.` o `.\SQLEXPRESS`).
-2. Abre el archivo `database/01_CREATE_DATABASE_MARTIN.sql` (`Ctrl + O`).
-3. Ejecuta el script (`F5`).
-4. Se creará la base de datos `RepresentacionesMartinDB` con 15 tablas normalizadas, triggers de actualización de Kardex, stored procedures (`sp_RegistrarMovimiento`, `sp_AjusteInventarioManual`, `sp_GenerarCierreDiario`, `sp_CalcularRotacionABC`), vistas de almacén y datos semilla madereros.
+2. Abre y ejecuta (`F5`) `database/00_CREAR_BD_LOCAL.sql`.
+3. Selecciona `RepresentacionesMartinDB` en el desplegable de bases de datos de SSMS, abre `database/01_ESQUEMA_Y_DATOS.sql` y ejecútalo. Si por error estás en `master` o la base ya tiene las tablas, el script se detiene sin hacer cambios.
+4. Se crean 15 tablas normalizadas, stored procedures (`sp_RegistrarMovimiento`, `sp_AjusteInventarioManual`, `sp_GenerarCierreDiario`, `sp_CalcularRotacionABC`), vistas de almacén y datos semilla madereros.
 5. Comprueba la conexión con `npm run test-db`.
+
+En **Azure SQL Database** la base se crea desde el portal: conecta SSMS directamente a ella y ejecuta solo `01_ESQUEMA_Y_DATOS.sql` y luego `02_USUARIO_APP_AZURE.sql`.
 
 ---
 

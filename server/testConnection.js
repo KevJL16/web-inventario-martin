@@ -45,7 +45,7 @@ async function testConnection() {
   } catch (err) {
     console.error('❌ Error al conectar a SQL Server:', err.message);
     console.log('\n💡 Sugerencia:');
-    console.log('1. Asegúrate de haber ejecutado database/01_CREATE_DATABASE_MARTIN.sql en SSMS.');
+    console.log('1. Asegúrate de haber ejecutado database/00_CREAR_BD_LOCAL.sql y database/01_ESQUEMA_Y_DATOS.sql en SSMS.');
     console.log('2. Comprueba que el servicio de SQL Server esté en estado "Running".');
     process.exit(1);
   }

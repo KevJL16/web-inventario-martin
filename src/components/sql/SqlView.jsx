@@ -9,7 +9,7 @@ export const SqlView = () => {
   const [testing, setTesting] = useState(false);
 
   const copyScriptPath = () => {
-    navigator.clipboard.writeText(`c:\\Users\\Kevin\\Desktop\\WEB INVENTARIO\\database\\01_CREATE_DATABASE_MARTIN.sql`);
+    navigator.clipboard.writeText(`c:\\Users\\Kevin\\Desktop\\WEB INVENTARIO\\database\\01_ESQUEMA_Y_DATOS.sql`);
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
   };
@@ -127,7 +127,7 @@ FROM Productos WHERE IdProducto = 1;`;
             {copied ? 'Ruta Copiada' : 'Copiar Ruta .SQL'}
           </button>
           <a
-            href="file:///c:/Users/Kevin/Desktop/WEB%20INVENTARIO/database/01_CREATE_DATABASE_MARTIN.sql"
+            href="file:///c:/Users/Kevin/Desktop/WEB%20INVENTARIO/database/01_ESQUEMA_Y_DATOS.sql"
             target="_blank"
             rel="noreferrer"
             className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors flex items-center gap-1.5"
