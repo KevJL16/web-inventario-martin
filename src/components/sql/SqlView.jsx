@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Database, Download, Copy, CheckCircle2, FileCode, Server, Terminal, Play, AlertTriangle, RefreshCw } from 'lucide-react';
-import { apiFetch } from '../../services/api';
+import { apiFetch, API_BASE_URL } from '../../services/api';
 
 export const SqlView = () => {
   const [copied, setCopied] = useState(false);
@@ -34,7 +34,7 @@ export const SqlView = () => {
     } catch (err) {
       setTestResult({
         success: false,
-        message: 'Servidor API (puerto 5000) no iniciado o sin respuesta.',
+        message: `Servidor API (${API_BASE_URL}) no iniciado o sin respuesta.`,
         hint: 'Ejecuta en una terminal: "npm run server" o prueba el comando directo: "npm run test-db"'
       });
     } finally {

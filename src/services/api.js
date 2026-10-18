@@ -3,7 +3,11 @@
  * Adjunta el JWT de la sesión en cada petición.
  */
 
-export const API_BASE_URL = 'http://localhost:5000';
+// Definida en .env (VITE_API_URL). Sin valor: en desarrollo se usa la API local;
+// en producción, rutas relativas al mismo dominio que sirve el frontend.
+export const API_BASE_URL = (
+  import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? 'http://localhost:5000' : '')
+).replace(/\/+$/, '');
 
 const TOKEN_KEY = 'martin_auth_token';
 

@@ -35,7 +35,7 @@ export const InventoryProvider = ({ children }) => {
   const [isDbConnected, setIsDbConnected] = useState(false);
   const [dbInfo, setDbInfo] = useState(null);
 
-  // Comprobar estado de conexión con SQL Server (API Node Express en puerto 5000)
+  // Comprobar estado de conexión con SQL Server (API Node Express, ver VITE_API_URL)
   const checkDbStatus = async () => {
     try {
       const res = await apiFetch('/api/status');
