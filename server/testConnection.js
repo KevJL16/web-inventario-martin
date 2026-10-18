@@ -4,46 +4,20 @@
 // ============================================================================
 
 import sql from 'mssql';
+import { dbConfig } from './config.js';
 
-const config = {
-  server: 'localhost',
-  database: 'RepresentacionesMartinDB',
-  options: {
-    encrypt: false,
-    trustServerCertificate: true,
-    enableArithAbort: true
-  },
-  authentication: {
-    type: 'default',
-    // Si usas autenticación SQL puedes agregar user y password, o autenticación integrada de Windows:
-  }
-};
-
-// Intentar conexión usando Windows Integrated Security o default
 async function testConnection() {
   console.log('\n===============================================================');
   console.log('🔍 VERIFICANDO CONEXIÓN A SQL SERVER (RepresentacionesMartinDB)');
   console.log('===============================================================\n');
 
   try {
-    // Conectar especificando el puerto 1434 detectado y usuario martin_user
-    const connConfig = {
-      server: '127.0.0.1',
-      port: 1434,
-      user: 'martin_user',
-      password: 'Martin2026!',
-      database: 'RepresentacionesMartinDB',
-      options: {
-        encrypt: false,
-        trustServerCertificate: true,
-        enableArithAbort: true
-      }
-    };
-    const pool = await sql.connect(connConfig);
-    
+    // Credenciales leídas de server/.env (ver server/config.js)
+    const pool = await sql.connect(dbConfig);
+
     console.log('✅ ¡CONEXIÓN EXITOSA A SQL SERVER!');
-    console.log('   Instancia: localhost');
-    console.log('   Base de datos: RepresentacionesMartinDB\n');
+    console.log(`   Instancia: ${dbConfig.server}:${dbConfig.port}`);
+    console.log(`   Base de datos: ${dbConfig.database}\n`);
 
     // 1. Consultar Productos
     const resProd = await pool.request().query('SELECT COUNT(*) AS TotalProductos FROM Productos;');

@@ -1,25 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import sql from 'mssql';
+import { PORT, dbConfig } from './config.js';
 
 const app = express();
-const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
-
-const dbConfig = {
-  server: '127.0.0.1',
-  port: 1434,
-  user: 'martin_user',
-  password: 'Martin2026!',
-  database: 'RepresentacionesMartinDB',
-  options: {
-    encrypt: false,
-    trustServerCertificate: true,
-    enableArithAbort: true
-  }
-};
 
 let pool = null;
 
@@ -280,5 +267,5 @@ app.post('/api/movimientos', async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`🚀 Servidor API de Base de Datos ejecutándose en http://localhost:${PORT}`);
-  console.log(`🔗 Conectado con SQL Server RepresentacionesMartinDB en puerto 1434.`);
+  console.log(`🔗 Base de datos: ${dbConfig.database} en ${dbConfig.server}:${dbConfig.port}`);
 });
