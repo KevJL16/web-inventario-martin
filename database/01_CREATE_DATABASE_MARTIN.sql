@@ -706,7 +706,9 @@ VALUES
 GO
 
 -- Usuarios iniciales (RF-01)
--- Claves simuladas seguras con hash (contraseña por defecto: 'Martin2026!')
+-- PasswordHash contiene marcadores que no corresponden a ningún hash bcrypt válido,
+-- por lo que estas cuentas no pueden iniciar sesión hasta asignarles una contraseña con:
+--   npm run set-password -- administrador@rep-martin.com
 INSERT INTO Usuarios (IdRol, Nombres, Apellidos, CorreoCorporativo, Telefono, Direccion, PasswordHash, RequiereCambioPassword, Activo)
 VALUES
 (1, 'Carlos Eduardo', 'Martín Quispe', 'administrador@rep-martin.com', '987654321', 'Av. Argentina 1850, Lima Industrial', 'HASH_ADMIN_2026', 0, 1),

@@ -11,36 +11,35 @@ export const AuthModal = ({ isOpen, onClose }) => {
   const [correo, setCorreo] = useState('');
   const [tokenInput, setTokenInput] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [generatedInfo, setGeneratedInfo] = useState(null);
+  const [requestMessage, setRequestMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
   if (!isOpen) return null;
 
-  const handleRequestToken = (e) => {
+  const handleRequestToken = async (e) => {
     e.preventDefault();
     setErrorMessage(null);
-    const res = requestPasswordReset(correo);
+    const res = await requestPasswordReset(correo);
 
     if (res.success) {
-      setGeneratedInfo(res);
-      setTokenInput(res.token); // Auto-llenar para facilidad de prueba
+      setRequestMessage(res.message);
       setStep('CONFIRM');
-      logAction('SOLICITUD_RESET_PASSWORD', 'SEGURIDAD', `Token de seguridad temporal generado para: ${correo}`);
+      logAction('SOLICITUD_RESET_PASSWORD', 'SEGURIDAD', `Solicitud de token de recuperación para: ${correo}`);
     } else {
       setErrorMessage(res.message);
     }
   };
 
-  const handleConfirmReset = (e) => {
+  const handleConfirmReset = async (e) => {
     e.preventDefault();
     setErrorMessage(null);
-    if (!newPassword || newPassword.length < 6) {
-      setErrorMessage('La nueva contraseña debe tener como mínimo 6 caracteres.');
+    if (!newPassword || newPassword.length < 8) {
+      setErrorMessage('La nueva contraseña debe tener como mínimo 8 caracteres.');
       return;
     }
 
-    const res = confirmPasswordReset(tokenInput, newPassword);
+    const res = await confirmPasswordReset(tokenInput, newPassword);
     if (res.success) {
       setSuccessMessage(res.message);
       logAction('PASSWORD_RESTABLECIDO', 'SEGURIDAD', `Restablecimiento exitoso de contraseña mediante token de seguridad.`);
@@ -54,7 +53,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
     setCorreo('');
     setTokenInput('');
     setNewPassword('');
-    setGeneratedInfo(null);
+    setRequestMessage(null);
     setSuccessMessage(null);
     setErrorMessage(null);
     onClose();
@@ -123,9 +122,6 @@ export const AuthModal = ({ isOpen, onClose }) => {
                     className="w-full pl-9 pr-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"
                   />
                 </div>
-                <p className="text-[10px] text-slate-400 mt-1">
-                  Cuentas de prueba: <span className="font-mono text-slate-600">administrador@rep-martin.com</span> o <span className="font-mono text-slate-600">almacen@rep-martin.com</span>
-                </p>
               </div>
 
               <div className="pt-2 flex justify-end gap-2">
@@ -148,9 +144,8 @@ export const AuthModal = ({ isOpen, onClose }) => {
             /* Paso 2: Validar Token y Crear Nueva Contraseña */
             <form onSubmit={handleConfirmReset} className="space-y-4">
               <div className="bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs text-amber-900">
-                <p className="font-bold">Token de Seguridad Emitido:</p>
-                <p className="font-mono font-bold text-amber-950 text-sm mt-0.5">{generatedInfo?.token}</p>
-                <p className="text-[10px] text-amber-700 mt-1">Válido por 30 minutos (Simulado en entorno web)</p>
+                <p className="font-bold">Revise su correo corporativo</p>
+                <p className="mt-0.5">{requestMessage}</p>
               </div>
 
               <div>
@@ -171,7 +166,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
                   required
                   value={newPassword}
                   onChange={e => setNewPassword(e.target.value)}
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Mínimo 8 caracteres"
                   className="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none"
                 />
               </div>

@@ -13,6 +13,7 @@ import {
 import { StorageModel } from '../models/StorageModel';
 import { InventoryController } from '../controllers/InventoryController';
 import { useAuth } from './AuthContext';
+import { apiFetch } from '../services/api';
 
 const InventoryContext = createContext();
 
@@ -36,7 +37,7 @@ export const InventoryProvider = ({ children }) => {
   // Comprobar estado de conexión con SQL Server (API Node Express en puerto 5000)
   const checkDbStatus = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/status');
+      const res = await apiFetch('/api/status');
       if (res.ok) {
         const data = await res.json();
         if (data.connected) {
@@ -53,15 +54,20 @@ export const InventoryProvider = ({ children }) => {
     }
   };
 
-  // Carga inicial y sondeo periódico de SQL Server
+  // Carga inicial y sondeo periódico de SQL Server (la API exige sesión iniciada)
   useEffect(() => {
+    if (!currentUser) {
+      setIsDbConnected(false);
+      return;
+    }
+
     const initDatabase = async () => {
       const connected = await checkDbStatus();
       if (connected) {
         try {
           const [resProds, resMovs] = await Promise.all([
-            fetch('http://localhost:5000/api/productos'),
-            fetch('http://localhost:5000/api/movimientos')
+            apiFetch('/api/productos'),
+            apiFetch('/api/movimientos')
           ]);
           if (resProds.ok) {
             const sqlProds = await resProds.json();
@@ -84,7 +90,7 @@ export const InventoryProvider = ({ children }) => {
     initDatabase();
     const interval = setInterval(checkDbStatus, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [currentUser?.id]);
 
   // Sincronización automática con LocalStorage de respaldo
   useEffect(() => { StorageModel.set('martin_categories', categories); }, [categories]);
@@ -115,24 +121,23 @@ export const InventoryProvider = ({ children }) => {
   // Sincronización en vivo con SQL Server (RepresentacionesMartinDB en puerto 1434 vía API Node)
   const syncWithSqlServer = async (movement) => {
     try {
-      const res = await fetch('http://localhost:5000/api/movimientos', {
+      const res = await apiFetch('/api/movimientos', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        // El servidor toma el usuario responsable del token de sesión
+        body: {
           sku: movement.sku,
           tipo: movement.tipo,
           cantidad: movement.cantidad,
           costoUnitario: movement.costoUnitario,
           comprobante: movement.comprobante,
-          observacion: movement.observacion,
-          usuarioId: currentUser?.id || 1
-        })
+          observacion: movement.observacion
+        }
       });
 
       if (res.ok) {
         setIsDbConnected(true);
         // Refrescar productos desde SQL Server para garantizar stock idéntico
-        const pRes = await fetch('http://localhost:5000/api/productos');
+        const pRes = await apiFetch('/api/productos');
         if (pRes.ok) {
           const freshProds = await pRes.json();
           if (Array.isArray(freshProds) && freshProds.length > 0) {

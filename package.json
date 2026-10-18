@@ -8,11 +8,14 @@
     "build": "vite build",
     "preview": "vite preview",
     "test-db": "node server/testConnection.js",
-    "server": "node server/server.js"
+    "server": "node server/server.js",
+    "set-password": "node server/setPassword.js"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.475.0",
     "mssql": "^12.7.2",
     "react": "^18.3.1",

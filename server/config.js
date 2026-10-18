@@ -25,6 +25,13 @@ function required(name) {
 }
 
 export const PORT = Number(process.env.PORT) || 5000;
+export const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+
+// Origen del frontend autorizado por CORS (Vite usa el puerto 3000)
+export const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:3000';
+
+export const JWT_SECRET = required('JWT_SECRET');
+export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '8h';
 
 export const dbConfig = {
   server: process.env.DB_SERVER || '127.0.0.1',

@@ -1,21 +1,19 @@
 import express from 'express';
 import cors from 'cors';
-import sql from 'mssql';
-import { PORT, dbConfig } from './config.js';
+import { PORT, dbConfig, CORS_ORIGIN } from './config.js';
+import { getPool, sql } from './db.js';
+import { authRouter, requireAuth } from './auth.js';
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: CORS_ORIGIN }));
 app.use(express.json());
 
-let pool = null;
+// Login, recuperación de cuenta y gestión de usuarios
+app.use('/api', authRouter);
 
-async function getPool() {
-  if (!pool) {
-    pool = await sql.connect(dbConfig);
-  }
-  return pool;
-}
+// A partir de aquí todos los endpoints requieren sesión válida
+app.use('/api', requireAuth);
 
 // 1. Endpoint de verificación de estado de conexión a SQL Server
 app.get('/api/status', async (req, res) => {
@@ -163,7 +161,9 @@ app.get('/api/kardex', async (req, res) => {
 // 6. Endpoint para registrar un movimiento en SQL Server en tiempo real (RF-16 y RF-17)
 app.post('/api/movimientos', async (req, res) => {
   try {
-    const { sku, tipo, cantidad, costoUnitario, comprobante, observacion, usuarioId } = req.body;
+    const { sku, tipo, cantidad, costoUnitario, comprobante, observacion } = req.body;
+    // El usuario responsable se toma de la sesión, no del cuerpo de la petición
+    const usuarioId = req.user.id;
     const p = await getPool();
 
     // 1. Buscar producto por SKU
@@ -210,7 +210,7 @@ app.post('/api/movimientos', async (req, res) => {
       // b. Insertar en MovimientosInventario
       const movRes = await transaction.request()
         .input('idProd', sql.Int, prod.IdProducto)
-        .input('idUser', sql.Int, Number(usuarioId) || 1)
+        .input('idUser', sql.Int, usuarioId)
         .input('tipo', sql.VarChar, tipo)
         .input('cantidad', sql.Int, qty)
         .input('stockAnt', sql.Int, stockAnterior)

@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 export const Navbar = ({ setActiveTab, openAuthModal, openVentaModal, toggleSidebar, isSidebarOpen }) => {
-  const { currentUser, switchUser, users, logout } = useAuth();
+  const { currentUser, logout } = useAuth();
   const { lowStockAlerts, resetDemoData, isDbConnected, dbInfo } = useInventory();
   const [showAlerts, setShowAlerts] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Database, Download, Copy, CheckCircle2, FileCode, Server, Terminal, Play, AlertTriangle, RefreshCw } from 'lucide-react';
+import { apiFetch } from '../../services/api';
 
 export const SqlView = () => {
   const [copied, setCopied] = useState(false);
@@ -23,7 +24,7 @@ export const SqlView = () => {
     setTesting(true);
     setTestResult(null);
     try {
-      const res = await fetch('http://localhost:5000/api/status');
+      const res = await apiFetch('/api/status');
       const data = await res.json();
       setTestResult({
         success: data.connected,

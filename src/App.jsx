@@ -77,7 +77,7 @@ class ErrorBoundary extends React.Component {
 }
 
 const MainLayout = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState(() => {
     return currentUser?.rolNombre === 'Vendedor' ? 'catalogo' : 'dashboard';
   });
@@ -96,6 +96,15 @@ const MainLayout = () => {
   React.useEffect(() => {
     setIsSidebarOpen(false);
   }, [activeTab]);
+
+  // Validando la sesión guardada con el servidor
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <span className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent"></span>
+      </div>
+    );
+  }
 
   // Si no ha iniciado sesión, mostrar la interfaz de Login
   if (!currentUser) {

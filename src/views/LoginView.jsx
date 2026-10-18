@@ -21,18 +21,16 @@ export const LoginView = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
     setLoading(true);
 
-    setTimeout(() => {
-      const res = login(usernameInput, passwordInput);
-      if (!res.success) {
-        setErrorMsg(res.message);
-        setLoading(false);
-      }
-    }, 200);
+    const res = await login(usernameInput, passwordInput);
+    if (!res.success) {
+      setErrorMsg(res.message);
+      setLoading(false);
+    }
   };
 
   return (
@@ -83,18 +81,18 @@ export const LoginView = () => {
             {/* Campo Usuario */}
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                Usuario o Correo Corporativo
+                Correo Corporativo
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                   <User className="w-4 h-4" />
                 </div>
                 <input
-                  type="text"
+                  type="email"
                   required
                   value={usernameInput}
                   onChange={(e) => setUsernameInput(e.target.value)}
-                  placeholder="Ingrese su usuario o correo"
+                  placeholder="ej: almacen@rep-martin.com"
                   autoComplete="username"
                   className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-martin-green-500 focus:bg-white transition-colors"
                 />
