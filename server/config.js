@@ -19,7 +19,10 @@ try {
 function required(name) {
   const value = process.env[name];
   if (!value) {
-    throw new Error(`Falta la variable de entorno ${name}. Revisa server/.env (ver server/.env.example).`);
+    const where = process.env.VERCEL
+      ? `las Environment Variables del proyecto en Vercel (entorno ${process.env.VERCEL_ENV}) y vuelve a desplegar`
+      : 'server/.env (ver server/.env.example)';
+    throw new Error(`Falta la variable de entorno ${name}. Revisa ${where}.`);
   }
   return value;
 }
