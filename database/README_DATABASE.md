@@ -7,19 +7,16 @@ Esta base de datos relacional para **SQL Server Management Studio (SSMS)** da so
 ## 🚀 Pasos para Ejecutar en SQL Server Management Studio (SSMS)
 
 1. Abre **SQL Server Management Studio (SSMS)** y conéctate a tu instancia de SQL Server (por ejemplo: `.` o `localhost` o `.\SQLEXPRESS`).
-2. Haz clic en **File > Open > File...** (o presiona `Ctrl + O`) y selecciona el archivo:
-   ```text
-   c:\Users\Kevin\Desktop\WEB INVENTARIO\database\01_CREATE_DATABASE_MARTIN.sql
-   ```
-3. Verifica que la ventana de consulta apunte a la base de datos `master` (el script se encargará de crear y posicionarse en `RepresentacionesMartinDB`).
-4. Haz clic en **Execute** (o presiona `F5`).
-5. En la pestaña de *Messages* verás el resultado exitoso:
+2. Abre (`Ctrl + O`) y ejecuta (`F5`) `database/00_CREAR_BD_LOCAL.sql`. Crea la base vacía `RepresentacionesMartinDB` (si ya existe, **la borra**). En Azure SQL este paso se omite: la base se crea desde el portal.
+3. Selecciona `RepresentacionesMartinDB` en el desplegable de bases de datos de SSMS, abre `database/01_ESQUEMA_Y_DATOS.sql` y ejecútalo. Si estás en `master` o la base ya tiene el esquema, el script se detiene sin hacer cambios.
+4. En la pestaña de *Messages* verás el resultado exitoso:
    ```text
    ======================================================================
-   Base de Datos "RepresentacionesMartinDB" creada y configurada con éxito.
-   Tablas, Triggers, Stored Procedures, Vistas y Semillas Listos para SSMS.
+   Esquema y datos de RepresentacionesMartinDB creados con éxito.
+   Tablas, procedimientos almacenados, vistas y datos semilla listos.
    ======================================================================
    ```
+5. En Azure SQL ejecuta además `database/02_USUARIO_APP_AZURE.sql` para crear el usuario de la aplicación.
 
 ---
 

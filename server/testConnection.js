@@ -3,47 +3,21 @@
 // "Representaciones Martín" - RepresentacionesMartinDB
 // ============================================================================
 
-import sql from 'mssql';
+import { getPool } from './db.js';
+import { dbConfig } from './config.js';
 
-const config = {
-  server: 'localhost',
-  database: 'RepresentacionesMartinDB',
-  options: {
-    encrypt: false,
-    trustServerCertificate: true,
-    enableArithAbort: true
-  },
-  authentication: {
-    type: 'default',
-    // Si usas autenticación SQL puedes agregar user y password, o autenticación integrada de Windows:
-  }
-};
-
-// Intentar conexión usando Windows Integrated Security o default
 async function testConnection() {
   console.log('\n===============================================================');
   console.log('🔍 VERIFICANDO CONEXIÓN A SQL SERVER (RepresentacionesMartinDB)');
   console.log('===============================================================\n');
 
   try {
-    // Conectar especificando el puerto 1434 detectado y usuario martin_user
-    const connConfig = {
-      server: '127.0.0.1',
-      port: 1434,
-      user: 'martin_user',
-      password: 'Martin2026!',
-      database: 'RepresentacionesMartinDB',
-      options: {
-        encrypt: false,
-        trustServerCertificate: true,
-        enableArithAbort: true
-      }
-    };
-    const pool = await sql.connect(connConfig);
-    
+    // Credenciales leídas de server/.env (ver server/config.js)
+    const pool = await getPool();
+
     console.log('✅ ¡CONEXIÓN EXITOSA A SQL SERVER!');
-    console.log('   Instancia: localhost');
-    console.log('   Base de datos: RepresentacionesMartinDB\n');
+    console.log(`   Instancia: ${dbConfig.server}:${dbConfig.port}`);
+    console.log(`   Base de datos: ${dbConfig.database}\n`);
 
     // 1. Consultar Productos
     const resProd = await pool.request().query('SELECT COUNT(*) AS TotalProductos FROM Productos;');
@@ -71,7 +45,7 @@ async function testConnection() {
   } catch (err) {
     console.error('❌ Error al conectar a SQL Server:', err.message);
     console.log('\n💡 Sugerencia:');
-    console.log('1. Asegúrate de haber ejecutado database/01_CREATE_DATABASE_MARTIN.sql en SSMS.');
+    console.log('1. Asegúrate de haber ejecutado database/00_CREAR_BD_LOCAL.sql y database/01_ESQUEMA_Y_DATOS.sql en SSMS.');
     console.log('2. Comprueba que el servicio de SQL Server esté en estado "Running".');
     process.exit(1);
   }

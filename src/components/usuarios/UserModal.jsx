@@ -20,17 +20,19 @@ export const UserModal = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.nombres || !formData.apellidos || !formData.correo || !formData.telefono) {
       alert('Por favor complete todos los datos obligatorios.');
       return;
     }
 
-    const res = registerUser(formData);
+    const res = await registerUser(formData);
     if (res.success) {
       setCreatedResult(res);
       logAction('CREAR_USUARIO', 'SEGURIDAD', `Registro de nuevo usuario: ${res.user.nombres} ${res.user.apellidos} (${res.user.rolNombre})`);
+    } else {
+      alert(res.message);
     }
   };
 

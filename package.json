@@ -3,16 +3,25 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=20.12"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "test-db": "node server/testConnection.js",
-    "server": "node server/server.js"
+    "server:azure": "node --env-file=server/.env.azure server/server.js",
+    "test-db:azure": "node --env-file=server/.env.azure server/testConnection.js",
+    "set-password:azure": "node --env-file=server/.env.azure server/setPassword.js",
+    "server": "node server/server.js",
+    "set-password": "node server/setPassword.js"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.475.0",
     "mssql": "^12.7.2",
     "react": "^18.3.1",

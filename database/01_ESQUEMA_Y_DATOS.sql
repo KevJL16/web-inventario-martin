@@ -1,25 +1,27 @@
--- ====================================================================================
+﻿-- ====================================================================================
 -- SISTEMA DE CONTROL DE INVENTARIO - "REPRESENTACIONES MARTÍN"
--- Script DDL / DML para SQL Server Management Studio (SSMS)
+-- Script DDL / DML: tablas, procedimientos, vistas y datos semilla
 -- Rubro: Maderero, Tableros de Melamina, Drywall, Pisos Laminados/Vinílicos y Muebles
 -- Cobertura de Requerimientos Funcionales: RF-01 al RF-22
+--
+-- Se ejecuta sobre una base de datos YA CREADA y vacía:
+--   * SQL Server local: primero 00_CREAR_BD_LOCAL.sql y luego este script.
+--   * Azure SQL Database: la base se crea en el portal; conecta SSMS a ella y ejecuta este script.
 -- ====================================================================================
 
-USE master;
-GO
-
-IF EXISTS (SELECT name FROM sys.databases WHERE name = N'RepresentacionesMartinDB')
+-- Protección: no ejecutar sobre master ni sobre una base que ya tiene el esquema.
+-- SET NOEXEC ON detiene la ejecución de todos los lotes siguientes de esta sesión.
+DECLARE @BaseActual SYSNAME = DB_NAME();
+IF @BaseActual = 'master'
 BEGIN
-    ALTER DATABASE RepresentacionesMartinDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE RepresentacionesMartinDB;
+    RAISERROR('Estás conectado a master. Selecciona la base RepresentacionesMartinDB y vuelve a ejecutar.', 16, 1);
+    SET NOEXEC ON;
 END
-GO
-
-CREATE DATABASE RepresentacionesMartinDB
-COLLATE Modern_Spanish_CI_AS;
-GO
-
-USE RepresentacionesMartinDB;
+ELSE IF OBJECT_ID('dbo.Usuarios', 'U') IS NOT NULL
+BEGIN
+    RAISERROR('La base %s ya contiene el esquema (existe la tabla Usuarios). No se ejecutó nada.', 16, 1, @BaseActual);
+    SET NOEXEC ON;
+END
 GO
 
 SET ANSI_NULLS ON;
@@ -706,7 +708,9 @@ VALUES
 GO
 
 -- Usuarios iniciales (RF-01)
--- Claves simuladas seguras con hash (contraseña por defecto: 'Martin2026!')
+-- PasswordHash contiene marcadores que no corresponden a ningún hash bcrypt válido,
+-- por lo que estas cuentas no pueden iniciar sesión hasta asignarles una contraseña con:
+--   npm run set-password -- administrador@rep-martin.com
 INSERT INTO Usuarios (IdRol, Nombres, Apellidos, CorreoCorporativo, Telefono, Direccion, PasswordHash, RequiereCambioPassword, Activo)
 VALUES
 (1, 'Carlos Eduardo', 'Martín Quispe', 'administrador@rep-martin.com', '987654321', 'Av. Argentina 1850, Lima Industrial', 'HASH_ADMIN_2026', 0, 1),
@@ -821,7 +825,9 @@ EXEC sp_CalcularRotacionABC;
 GO
 
 PRINT '======================================================================';
-PRINT 'Base de Datos "RepresentacionesMartinDB" creada y configurada con éxito.';
-PRINT 'Tablas, Triggers, Stored Procedures, Vistas y Semillas Listos para SSMS.';
+PRINT 'Esquema y datos de RepresentacionesMartinDB creados con éxito.';
+PRINT 'Tablas, procedimientos almacenados, vistas y datos semilla listos.';
 PRINT '======================================================================';
+GO
+SET NOEXEC OFF;
 GO

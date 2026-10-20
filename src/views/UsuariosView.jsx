@@ -11,17 +11,16 @@ import {
   CheckCircle2,
   XCircle,
   AlertTriangle,
-  RotateCcw,
-  UserCheck
+  RotateCcw
 } from 'lucide-react';
 import { UserModal } from '../components/usuarios/UserModal';
 
 export const UsuariosView = () => {
-  const { users, toggleUserStatus, switchUser, currentUser } = useAuth();
+  const { users, toggleUserStatus, currentUser } = useAuth();
   const { logAction } = useInventory();
   const [modalOpen, setModalOpen] = useState(false);
 
-  const handleToggleStatus = (user) => {
+  const handleToggleStatus = async (user) => {
     if (user.id === currentUser.id) {
       alert('No puedes suspender tu propia cuenta activa de administrador.');
       return;
@@ -29,13 +28,11 @@ export const UsuariosView = () => {
 
     if (user.activo) {
       const motivo = window.prompt(`Ingrese el motivo formal de la baja lógica para ${user.nombres} ${user.apellidos}:`, 'Cese de contrato laboral / Fin de actividades');
-      if (motivo !== null) {
-        toggleUserStatus(user.id, motivo);
+      if (motivo !== null && await toggleUserStatus(user.id, motivo)) {
         logAction('BAJA_USUARIO', 'SEGURIDAD', `Inactivación (baja lógica) de ${user.nombres} ${user.apellidos}. Motivo: ${motivo}`);
       }
     } else {
-      if (window.confirm(`¿Desea reactivar el acceso al sistema para ${user.nombres} ${user.apellidos}?`)) {
-        toggleUserStatus(user.id);
+      if (window.confirm(`¿Desea reactivar el acceso al sistema para ${user.nombres} ${user.apellidos}?`) && await toggleUserStatus(user.id)) {
         logAction('REACTIVAR_USUARIO', 'SEGURIDAD', `Reactivación de acceso para ${user.nombres} ${user.apellidos}`);
       }
     }
@@ -114,15 +111,7 @@ export const UsuariosView = () => {
               </div>
             )}
 
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-              <button
-                onClick={() => switchUser(u.id)}
-                disabled={!u.activo}
-                className="px-3 py-1.5 text-[11px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors flex items-center gap-1.5 disabled:opacity-40"
-              >
-                <UserCheck className="w-3.5 h-3.5 text-martin-green-600" /> Simular Sesión
-              </button>
-
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
               <button
                 onClick={() => handleToggleStatus(u)}
                 className={`px-3 py-1.5 text-[11px] font-bold rounded-lg transition-colors ${

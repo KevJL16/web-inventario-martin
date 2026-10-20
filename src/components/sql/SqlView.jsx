@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Database, Download, Copy, CheckCircle2, FileCode, Server, Terminal, Play, AlertTriangle, RefreshCw } from 'lucide-react';
+import { apiFetch, API_BASE_URL } from '../../services/api';
 
 export const SqlView = () => {
   const [copied, setCopied] = useState(false);
@@ -8,7 +9,7 @@ export const SqlView = () => {
   const [testing, setTesting] = useState(false);
 
   const copyScriptPath = () => {
-    navigator.clipboard.writeText(`c:\\Users\\Kevin\\Desktop\\WEB INVENTARIO\\database\\01_CREATE_DATABASE_MARTIN.sql`);
+    navigator.clipboard.writeText(`c:\\Users\\Kevin\\Desktop\\WEB INVENTARIO\\database\\01_ESQUEMA_Y_DATOS.sql`);
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
   };
@@ -23,7 +24,7 @@ export const SqlView = () => {
     setTesting(true);
     setTestResult(null);
     try {
-      const res = await fetch('http://localhost:5000/api/status');
+      const res = await apiFetch('/api/status');
       const data = await res.json();
       setTestResult({
         success: data.connected,
@@ -33,7 +34,7 @@ export const SqlView = () => {
     } catch (err) {
       setTestResult({
         success: false,
-        message: 'Servidor API (puerto 5000) no iniciado o sin respuesta.',
+        message: `Servidor API (${API_BASE_URL}) no iniciado o sin respuesta.`,
         hint: 'Ejecuta en una terminal: "npm run server" o prueba el comando directo: "npm run test-db"'
       });
     } finally {
@@ -126,7 +127,7 @@ FROM Productos WHERE IdProducto = 1;`;
             {copied ? 'Ruta Copiada' : 'Copiar Ruta .SQL'}
           </button>
           <a
-            href="file:///c:/Users/Kevin/Desktop/WEB%20INVENTARIO/database/01_CREATE_DATABASE_MARTIN.sql"
+            href="file:///c:/Users/Kevin/Desktop/WEB%20INVENTARIO/database/01_ESQUEMA_Y_DATOS.sql"
             target="_blank"
             rel="noreferrer"
             className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors flex items-center gap-1.5"

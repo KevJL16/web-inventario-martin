@@ -33,17 +33,26 @@ Plataforma integral de gestión y control de inventarios desarrollada a medida p
 
 ---
 
-## 💻 Ejecución de la Aplicación Web
+## 💻 Ejecución Local
 
-### 1. Iniciar en Modo de Desarrollo
-Abre una terminal en la carpeta del proyecto y ejecuta:
+### 1. Configurar variables de entorno
 ```bash
-npm run dev
+cp server/.env.example server/.env   # credenciales de SQL Server y JWT_SECRET
+cp .env.example .env                 # URL de la API para el frontend
 ```
-La aplicación iniciará automáticamente en:
-👉 `http://localhost:3000`
+- `server/.env` contiene secretos (contraseña de la BD, `JWT_SECRET`) y **nunca** se sube al repositorio.
+- `.env` solo admite variables `VITE_*`, que se incrustan en el JavaScript público: no pongas secretos ahí.
 
-### 2. Generar Build de Producción
+### 2. Instalar dependencias e iniciar
+```bash
+npm install
+npm run server   # API Node/Express en http://localhost:5000
+npm run dev      # Frontend en http://localhost:3000
+```
+
+> 💡 Si PowerShell bloquea `npm` ("la ejecución de scripts está deshabilitada"), usa una terminal **Command Prompt** en VS Code o ejecuta `npm.cmd run dev`. No requiere permisos de administrador.
+
+### 3. Generar Build de Producción
 ```bash
 npm run build
 ```
@@ -52,24 +61,70 @@ npm run build
 
 ## 🗄️ Base de Datos en SQL Server Management Studio (SSMS)
 
-El script SQL completo y autoejecutable se encuentra en:
-📁 `database/01_CREATE_DATABASE_MARTIN.sql`
+Los scripts están en `database/`:
+- 📁 `00_CREAR_BD_LOCAL.sql`: crea la base de datos vacía (**solo SQL Server local**; borra la existente).
+- 📁 `01_ESQUEMA_Y_DATOS.sql`: tablas, procedimientos, vistas y datos semilla. Funciona en local y en **Azure SQL Database**.
+- 📁 `02_USUARIO_APP_AZURE.sql`: usuario de la aplicación con permisos mínimos (Azure SQL).
 
-### Pasos para ejecutar en SSMS:
+### Pasos para ejecutar en SSMS (local):
 1. Conéctate a tu instancia de **SQL Server** en SSMS (`localhost`, `.` o `.\SQLEXPRESS`).
-2. Abre el archivo `database/01_CREATE_DATABASE_MARTIN.sql` (`Ctrl + O`).
-3. Ejecuta el script (`F5`).
-4. Se creará la base de datos `RepresentacionesMartinDB` con 15 tablas normalizadas, triggers de actualización de Kardex, stored procedures (`sp_RegistrarMovimiento`, `sp_AjusteInventarioManual`, `sp_GenerarCierreDiario`, `sp_CalcularRotacionABC`), vistas de almacén y datos semilla madereros.
+2. Abre y ejecuta (`F5`) `database/00_CREAR_BD_LOCAL.sql`.
+3. Selecciona `RepresentacionesMartinDB` en el desplegable de bases de datos de SSMS, abre `database/01_ESQUEMA_Y_DATOS.sql` y ejecútalo. Si por error estás en `master` o la base ya tiene las tablas, el script se detiene sin hacer cambios.
+4. Se crean 15 tablas normalizadas, stored procedures (`sp_RegistrarMovimiento`, `sp_AjusteInventarioManual`, `sp_GenerarCierreDiario`, `sp_CalcularRotacionABC`), vistas de almacén y datos semilla madereros.
+5. Comprueba la conexión con `npm run test-db`.
+
+En **Azure SQL Database** la base se crea desde el portal: conecta SSMS directamente a ella y ejecuta solo `01_ESQUEMA_Y_DATOS.sql` y luego `02_USUARIO_APP_AZURE.sql`.
 
 ---
 
-## 👤 Cuentas de Acceso Preconfiguradas (Demostración RBAC)
+## 👤 Cuentas de Acceso
 
-Puedes alternar entre estos perfiles desde el selector **"Simular Rol"** en la barra superior (Navbar):
+La autenticación se valida en el servidor: contraseñas hasheadas con **bcrypt** y sesión mediante **JWT**. El script SQL crea estas cuentas **sin contraseña utilizable**; asígnala con:
+
+```bash
+npm run set-password -- administrador@rep-martin.com            # genera una temporal y la muestra una vez
+npm run set-password -- administrador@rep-martin.com "MiClave123"  # o fija una concreta
+```
 
 | Rol | Usuario | Correo Corporativo | Acceso y Privilegios |
 | :--- | :--- | :--- | :--- |
 | **Administrador** | Carlos Eduardo Martín | `administrador@rep-martin.com` | Control total del sistema, configuración, usuarios y bitácoras de auditoría. |
 | **Gerencia** | Patricia Andrea Villanueva | `gerencia@rep-martin.com` | Visualización ejecutiva, reportes financieros, Kardex, rotación ABC y auditoría. |
 | **Encargado de Almacén** | Jorge Luis Paredes | `almacen@rep-martin.com` | Consulta rápida en patio, recepción de órdenes de compra, despacho y registro de mermas. |
->>>>>>> cd6a6ba (initial commit)
+
+---
+
+## ☁️ Despliegue en Vercel
+
+El proyecto se despliega como **un solo proyecto de Vercel**: el frontend (Vite) se sirve desde la CDN y la API Express corre como función serverless (`api/index.js` → `server/app.js`). `vercel.json` redirige `/api/*` a la función. Al estar en el mismo dominio no hace falta `VITE_API_URL` ni CORS.
+
+> ⚠️ Vercel no puede conectarse a un SQL Server en `localhost`. Antes de desplegar necesitas una base de datos accesible desde internet (p. ej. **Azure SQL Database**).
+
+### Pasos
+1. Sube el repositorio a GitHub (`dist/` no se versiona: Vercel ejecuta `npm run build`).
+2. En [vercel.com/new](https://vercel.com/new) importa el repositorio. Vercel detecta Vite y lee `vercel.json`.
+3. En **Settings → Environment Variables** define:
+
+| Variable | Ejemplo / valor |
+| :--- | :--- |
+| `DB_SERVER` | `tu-servidor.database.windows.net` |
+| `DB_PORT` | `1433` |
+| `DB_USER` | `martin_app` (creado con `database/02_USUARIO_APP_AZURE.sql`) |
+| `DB_PASSWORD` | la contraseña que pusiste a `martin_app` |
+| `DB_NAME` | `RepresentacionesMartinDB` |
+| `DB_ENCRYPT` | `true` (obligatorio en Azure SQL) |
+| `DB_TRUST_SERVER_CERTIFICATE` | `false` |
+| `JWT_SECRET` | cadena aleatoria larga (ver `server/.env.example`) |
+| `CORS_ORIGIN` | `https://tu-proyecto.vercel.app` |
+
+> No definas `NODE_ENV` en Vercel: Vercel ya usa `production`, y si lo fuerzas durante el build `npm install` omite las devDependencies (Vite) y el build falla.
+
+4. Despliega. Comprueba que `https://tu-proyecto.vercel.app/api/status` responde `401` (la API funciona y exige sesión).
+5. Asigna las contraseñas de las cuentas desde tu PC con los scripts `:azure`, que leen `server/.env.azure` (copia `server/.env.azure.example`) sin tocar `server/.env`:
+   ```bash
+   npm run test-db:azure                                        # probar la conexión
+   npm run set-password:azure -- administrador@rep-martin.com   # contraseña temporal
+   npm run server:azure                                         # API local contra Azure (probar con npm run dev)
+   ```
+
+La función se ejecuta en São Paulo (`"regions": ["gru1"]` en `vercel.json`), junto a la base de datos en Brazil South.

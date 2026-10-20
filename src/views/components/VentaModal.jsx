@@ -1,3 +1,4 @@
+import { randomDigits } from '../../utils/random';
 import React, { useState, useEffect } from 'react';
 import { useInventory } from '../../context/InventoryContext';
 import { 
@@ -48,7 +49,7 @@ export const VentaModal = ({ isOpen, onClose, initialProductId = null }) => {
     }
 
     const prefix = tipoComprobante === 'FACTURA' ? 'F001' : tipoComprobante === 'BOLETA' ? 'B001' : 'VAL';
-    const correlativo = Math.floor(10000 + Math.random() * 90000);
+    const correlativo = randomDigits(5);
     setComprobante(`${prefix}-${correlativo}`);
     setErrorMessage('');
   }, [selectedId, tipoComprobante]);

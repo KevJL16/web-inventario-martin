@@ -16,4 +16,3 @@ export { CierreDiarioView } from './CierreDiarioView';
 export { UsuariosView } from './UsuariosView';
 export { AuditoriaLogsView } from './AuditoriaLogsView';
 export { LoginView } from './LoginView';
-export { VentaModal } from './components/VentaModal';

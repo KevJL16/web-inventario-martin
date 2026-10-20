@@ -62,10 +62,10 @@ export const AlmacenUbicacionesView = () => {
 
       {/* Grid Interactivo 2D de Racks y Bahías */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredLocations.map(loc => {
+        {filteredLocations.map((loc, index) => {
           if (!loc) return null;
 
-          const locId = loc.id ?? loc.IdUbicacion ?? Math.random();
+          const locId = loc.id ?? loc.IdUbicacion ?? `SIN-ID-${index + 1}`;
           const locCodigo = loc.codigo ?? loc.CodigoUbicacion ?? `LOC-${locId}`;
           const locZona = loc.zona ?? loc.Zona ?? 'ZONA-A';
           const locPasillo = loc.pasillo ?? loc.Pasillo ?? 'P-01';

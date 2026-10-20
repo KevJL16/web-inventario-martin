@@ -18,8 +18,7 @@ import {
   CierreDiarioView,
   UsuariosView,
   AuditoriaLogsView,
-  LoginView,
-  VentaModal
+  LoginView
 } from './views';
 import { ShieldAlert, Lock, RotateCcw } from 'lucide-react';
 
@@ -77,13 +76,12 @@ class ErrorBoundary extends React.Component {
 }
 
 const MainLayout = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState(() => {
     return currentUser?.rolNombre === 'Vendedor' ? 'catalogo' : 'dashboard';
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [ventaModalOpen, setVentaModalOpen] = useState(false);
 
   // Restablecer vista inicial según el rol al cambiar de usuario o iniciar sesión
   React.useEffect(() => {
@@ -96,6 +94,15 @@ const MainLayout = () => {
   React.useEffect(() => {
     setIsSidebarOpen(false);
   }, [activeTab]);
+
+  // Validando la sesión guardada con el servidor
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <span className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent"></span>
+      </div>
+    );
+  }
 
   // Si no ha iniciado sesión, mostrar la interfaz de Login
   if (!currentUser) {
@@ -181,7 +188,6 @@ const MainLayout = () => {
       <Navbar
         setActiveTab={setActiveTab}
         openAuthModal={() => setAuthModalOpen(true)}
-        openVentaModal={() => setVentaModalOpen(true)}
         toggleSidebar={() => setIsSidebarOpen(prev => !prev)}
         isSidebarOpen={isSidebarOpen}
       />
@@ -202,12 +208,6 @@ const MainLayout = () => {
       <AuthModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
-      />
-
-      {/* Modal Global de Ventas / Despacho (RF-16) */}
-      <VentaModal
-        isOpen={ventaModalOpen}
-        onClose={() => setVentaModalOpen(false)}
       />
     </div>
   );
