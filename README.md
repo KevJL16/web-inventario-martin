@@ -116,7 +116,8 @@ El proyecto se despliega como **un solo proyecto de Vercel**: el frontend (Vite)
 | `DB_TRUST_SERVER_CERTIFICATE` | `false` |
 | `JWT_SECRET` | cadena aleatoria larga (ver `server/.env.example`) |
 | `CORS_ORIGIN` | `https://tu-proyecto.vercel.app` |
-| `NODE_ENV` | `production` |
+
+> No definas `NODE_ENV` en Vercel: Vercel ya usa `production`, y si lo fuerzas durante el build `npm install` omite las devDependencies (Vite) y el build falla.
 
 4. Despliega. Comprueba que `https://tu-proyecto.vercel.app/api/status` responde `401` (la API funciona y exige sesión).
 5. Asigna las contraseñas de las cuentas desde tu PC con los scripts `:azure`, que leen `server/.env.azure` (copia `server/.env.azure.example`) sin tocar `server/.env`:
