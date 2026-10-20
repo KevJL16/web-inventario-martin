@@ -119,4 +119,11 @@ El proyecto se despliega como **un solo proyecto de Vercel**: el frontend (Vite)
 | `NODE_ENV` | `production` |
 
 4. Despliega. Comprueba que `https://tu-proyecto.vercel.app/api/status` responde `401` (la API funciona y exige sesión).
-5. Asigna las contraseñas ejecutando `npm run set-password` en local con `server/.env` apuntando a la base de datos en la nube.
+5. Asigna las contraseñas de las cuentas desde tu PC con los scripts `:azure`, que leen `server/.env.azure` (copia `server/.env.azure.example`) sin tocar `server/.env`:
+   ```bash
+   npm run test-db:azure                                        # probar la conexión
+   npm run set-password:azure -- administrador@rep-martin.com   # contraseña temporal
+   npm run server:azure                                         # API local contra Azure (probar con npm run dev)
+   ```
+
+La función se ejecuta en São Paulo (`"regions": ["gru1"]` en `vercel.json`), junto a la base de datos en Brazil South.
