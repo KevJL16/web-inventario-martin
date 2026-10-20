@@ -18,8 +18,7 @@ import {
   CierreDiarioView,
   UsuariosView,
   AuditoriaLogsView,
-  LoginView,
-  VentaModal
+  LoginView
 } from './views';
 import { ShieldAlert, Lock, RotateCcw } from 'lucide-react';
 
@@ -83,7 +82,6 @@ const MainLayout = () => {
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [ventaModalOpen, setVentaModalOpen] = useState(false);
 
   // Restablecer vista inicial según el rol al cambiar de usuario o iniciar sesión
   React.useEffect(() => {
@@ -190,7 +188,6 @@ const MainLayout = () => {
       <Navbar
         setActiveTab={setActiveTab}
         openAuthModal={() => setAuthModalOpen(true)}
-        openVentaModal={() => setVentaModalOpen(true)}
         toggleSidebar={() => setIsSidebarOpen(prev => !prev)}
         isSidebarOpen={isSidebarOpen}
       />
@@ -211,12 +208,6 @@ const MainLayout = () => {
       <AuthModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
-      />
-
-      {/* Modal Global de Ventas / Despacho (RF-16) */}
-      <VentaModal
-        isOpen={ventaModalOpen}
-        onClose={() => setVentaModalOpen(false)}
       />
     </div>
   );

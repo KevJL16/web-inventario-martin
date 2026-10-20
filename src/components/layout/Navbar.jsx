@@ -12,12 +12,11 @@ import {
   Package, 
   ChevronDown, 
   KeyRound, 
-  ShoppingCart, 
   CheckCircle2, 
   LogOut 
 } from 'lucide-react';
 
-export const Navbar = ({ setActiveTab, openAuthModal, openVentaModal, toggleSidebar, isSidebarOpen }) => {
+export const Navbar = ({ setActiveTab, openAuthModal, toggleSidebar, isSidebarOpen }) => {
   const { currentUser, logout } = useAuth();
   const { lowStockAlerts, resetDemoData, isDbConnected, dbInfo } = useInventory();
   const [showAlerts, setShowAlerts] = useState(false);
@@ -68,18 +67,6 @@ export const Navbar = ({ setActiveTab, openAuthModal, openVentaModal, toggleSide
 
           {/* Acciones Rápidas */}
           <div className="flex items-center space-x-1.5 sm:space-x-3">
-            
-            {/* Botón Principal: Registrar Venta / Despacho (Solo Administrador y Vendedor) */}
-            {['Administrador', 'Vendedor'].includes(currentUser?.rolNombre) && (
-              <button
-                onClick={openVentaModal}
-                className="px-2.5 sm:px-3.5 py-2 bg-martin-green-500 hover:bg-martin-green-600 text-white font-bold text-xs rounded-xl shadow-sm hover:shadow transition-all flex items-center gap-1.5 sm:gap-2 shrink-0 cursor-pointer"
-                title="Registrar una salida por venta o despacho inmediato"
-              >
-                <ShoppingCart className="w-4 h-4" />
-                <span className="hidden sm:inline">Registrar Venta</span>
-              </button>
-            )}
 
             {/* Indicador de Estado de Conexión a Base de Datos SQL Server */}
             <div className="hidden lg:flex items-center">
