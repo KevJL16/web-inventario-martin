@@ -5,7 +5,8 @@
 
 export const OrderModel = {
   calculateTotals: (items) => {
-    const subtotal = items.reduce((acc, it) => acc + (Number(it.cantidad) * Number(it.costoUnitario)), 0);
+    // Importes en soles redondeados a céntimos (evita errores de coma flotante como 0.30000000000000004)
+    const subtotal = Math.round(items.reduce((acc, it) => acc + (Number(it.cantidad) * Number(it.costoUnitario)), 0) * 100) / 100;
     const igv = Math.round(subtotal * 0.18 * 100) / 100;
     const total = Math.round((subtotal + igv) * 100) / 100;
     return { subtotal, igv, total };

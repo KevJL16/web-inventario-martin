@@ -28,8 +28,12 @@ export const MovementModel = {
       return { isValid: false, errors };
     }
 
+    if (!MovementModel.isEntry(tipo) && !MovementModel.isExit(tipo)) {
+      errors.push('Tipo de movimiento no reconocido.');
+    }
+
     const qty = Number(cantidad);
-    if (isNaN(qty) || qty <= 0) {
+    if (!Number.isInteger(qty) || qty <= 0) {
       errors.push('La cantidad debe ser un número entero mayor a 0.');
     }
 
