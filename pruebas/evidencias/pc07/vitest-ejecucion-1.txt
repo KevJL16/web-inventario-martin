@@ -1,0 +1,144 @@
+
+ RUN  v3.2.7 C:/Users/Kevin/Desktop/WEB INVENTARIO CLAUCOL/web-inventario-martin
+
+ ❯ tests/unit/OrderModel.test.js (4 tests | 1 failed) 18ms
+   ✓ OrderModel.calculateTotals > calcula subtotal, IGV (18 %) y total 3ms
+   ✓ OrderModel.calculateTotals > una orden vacía suma 0 0ms
+   × OrderModel.calculateTotals > redondea el subtotal a céntimos 12ms
+     → expected 0.30000000000000004 to be 0.3 // Object.is equality
+   ✓ OrderModel.validate > exige proveedor y al menos un producto 1ms
+ ❯ tests/unit/ProductModel.test.js (19 tests | 4 failed) 21ms
+   ✓ ProductModel.validate > acepta un producto válido 2ms
+   ✓ ProductModel.validate > exige el campo sku (vacío o solo espacios) 0ms
+   ✓ ProductModel.validate > exige el campo nombre (vacío o solo espacios) 0ms
+   ✓ ProductModel.validate > exige el campo codigoBarras (vacío o solo espacios) 0ms
+   ✓ ProductModel.validate > rechaza un precio de venta 0 o inferior al costo 0ms
+   ✓ ProductModel.validate > acepta un precio igual al costo (valor límite) 0ms
+   ✓ ProductModel.validate > exige stock máximo mayor que el mínimo 0ms
+   × ProductModel.validate > rechaza precioVenta no numérico (abc) 12ms
+     → expected true to be false // Object.is equality
+   × ProductModel.validate > rechaza costoCompra no numérico (abc) 1ms
+     → expected true to be false // Object.is equality
+   × ProductModel.validate > rechaza stockMinimo no numérico (diez) 1ms
+     → expected true to be false // Object.is equality
+   × ProductModel.validate > rechaza stockMaximo no numérico (undefined) 1ms
+     → expected true to be false // Object.is equality
+   ✓ ProductModel.getStockStatus > stock 0 con mínimo 10 y máximo 100 es AGOTADO 0ms
+   ✓ ProductModel.getStockStatus > stock 5 con mínimo 10 y máximo 100 es CRITICO 0ms
+   ✓ ProductModel.getStockStatus > stock 10 con mínimo 10 y máximo 100 es BAJO 0ms
+   ✓ ProductModel.getStockStatus > stock 50 con mínimo 10 y máximo 100 es NORMAL 0ms
+   ✓ ProductModel.getStockStatus > stock 101 con mínimo 10 y máximo 100 es SOBRESTOCK 0ms
+   ✓ ProductModel.getStockStatus > CP-11: el producto de prueba (stock 10, mínimo 15) queda en estado bajo 0ms
+   ✓ ProductModel.calculateMargin > calcula el margen bruto con un decimal 0ms
+   ✓ ProductModel.calculateMargin > devuelve 0 si el precio es 0 0ms
+ ✓ tests/unit/adjustmentRules.test.js (45 tests) 18ms
+ ✓ tests/unit/AdjustmentModel.test.js (15 tests) 8ms
+ ❯ tests/unit/MovementModel.test.js (15 tests | 2 failed) 34ms
+   ✓ MovementModel.isEntry / isExit > clasifica entradas y salidas 4ms
+   ✓ MovementModel.validate > acepta una salida dentro del stock disponible 1ms
+   ✓ MovementModel.validate > rechaza una salida mayor al stock (control de negativos) 0ms
+   ✓ MovementModel.validate > una entrada no depende del stock actual 1ms
+   ✓ MovementModel.validate > rechaza producto inexistente 2ms
+   ✓ MovementModel.validate > rechaza la cantidad 0 0ms
+   ✓ MovementModel.validate > rechaza la cantidad -1 0ms
+   ✓ MovementModel.validate > rechaza la cantidad abc 0ms
+   × MovementModel.validate > rechaza una cantidad decimal 11ms
+     → expected true to be false // Object.is equality
+   ✓ MovementModel.validate > rechaza un costo negativo 0ms
+   × MovementModel.validate > rechaza un tipo de movimiento desconocido 1ms
+     → expected true to be false // Object.is equality
+   ✓ MovementModel.createMovementRecord y createKardexEntry > una salida descuenta stock y calcula el total redondeado 6ms
+   ✓ MovementModel.createMovementRecord y createKardexEntry > usa el costo de compra del producto si no se indica costo 1ms
+   ✓ MovementModel.createMovementRecord y createKardexEntry > el asiento de Kardex de una salida solo llena las columnas de salida 1ms
+   ✓ MovementModel.createMovementRecord y createKardexEntry > el asiento de Kardex de una entrada solo llena las columnas de entrada 0ms
+ ✓ tests/unit/seguridad.test.js (8 tests) 1916ms
+   ✓ Contraseñas (bcrypt) > el hash no contiene la contraseña y se verifica correctamente  1067ms
+   ✓ Contraseñas (bcrypt) > el hash ficticio no valida ninguna contraseña habitual  655ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/MovementModel.test.js > MovementModel.validate > rechaza una cantidad decimal
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/MovementModel.test.js:43:125
+     41|   // Caso de borde: el mensaje exige "número entero", así que 2.5 plan…
+     42|   it('rechaza una cantidad decimal', () => {
+     43|     expect(MovementModel.validate({ product: producto, tipo: 'SALIDA_V…
+       |                                                                                                                             ^
+     44|   });
+     45| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  tests/unit/MovementModel.test.js > MovementModel.validate > rechaza un tipo de movimiento desconocido
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/MovementModel.test.js:52:117
+     50|   // Caso de borde: un tipo que no es entrada ni salida no debe valida…
+     51|   it('rechaza un tipo de movimiento desconocido', () => {
+     52|     expect(MovementModel.validate({ product: producto, tipo: 'TRASLADO…
+       |                                                                                                                     ^
+     53|   });
+     54| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  tests/unit/OrderModel.test.js > OrderModel.calculateTotals > redondea el subtotal a céntimos
+AssertionError: expected 0.30000000000000004 to be 0.3 // Object.is equality
+
+- Expected
++ Received
+
+- 0.3
++ 0.30000000000000004
+
+ ❯ tests/unit/OrderModel.test.js:17:88
+     15|   // Caso de borde: errores de coma flotante en importes de dinero
+     16|   it('redondea el subtotal a céntimos', () => {
+     17|     expect(OrderModel.calculateTotals([{ cantidad: 3, costoUnitario: 0…
+       |                                                                                        ^
+     18|   });
+     19| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  tests/unit/ProductModel.test.js > ProductModel.validate > rechaza precioVenta no numérico (abc)
+ FAIL  tests/unit/ProductModel.test.js > ProductModel.validate > rechaza costoCompra no numérico (abc)
+ FAIL  tests/unit/ProductModel.test.js > ProductModel.validate > rechaza stockMinimo no numérico (diez)
+ FAIL  tests/unit/ProductModel.test.js > ProductModel.validate > rechaza stockMaximo no numérico (undefined)
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/unit/ProductModel.test.js:45:74
+     43|     ['stockMaximo', undefined]
+     44|   ])('rechaza %s no numérico (%s)', (campo, valor) => {
+     45|     expect(ProductModel.validate({ ...valido, [campo]: valor }).isVali…
+       |                                                                          ^
+     46|   });
+     47| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+
+ Test Files  3 failed | 3 passed (6)
+      Tests  7 failed | 99 passed (106)
+   Start at  23:58:14
+   Duration  3.66s (transform 225ms, setup 0ms, collect 1.09s, tests 2.02s, environment 2ms, prepare 3.31s)
+

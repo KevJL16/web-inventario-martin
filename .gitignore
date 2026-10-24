@@ -442,3 +442,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Informe HTML de cobertura (se regenera con npm run test:cobertura)
+pruebas/cobertura/
