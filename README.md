@@ -77,6 +77,33 @@ En **Azure SQL Database** la base se crea desde el portal: conecta SSMS directam
 
 ---
 
+## 🧪 Pruebas (Calidad y Pruebas de Software, PC 5-10)
+
+El caso de uso principal probado es la **HU-004 Registro de mermas justificadas** (`POST/GET /api/ajustes` y la vista "Ajustes y Mermas").
+
+### Ambiente de pruebas
+```bash
+cp server/.env.pruebas.example server/.env.pruebas   # completa DB_USER / DB_PASSWORD del SQL Server local
+npm run db:pruebas:reset    # recrea RepresentacionesMartinDB_Pruebas con datos conocidos
+npm run server:pruebas      # API contra la base de pruebas
+npm run dev                 # web en http://localhost:3000
+```
+El script de reinicio se niega a borrar cualquier base que no termine en `_Pruebas`.
+
+### Ejecutar las pruebas
+| Comando | Tipo | Requiere |
+| :--- | :--- | :--- |
+| `npm test` | Unitarias (Vitest, `tests/unit`) | Nada |
+| `npm run test:cobertura` | Unitarias + cobertura (umbral en `vitest.config.js`) | Nada |
+| `npm run test:api` | API de ajustes (`tests/api`) | `server:pruebas` |
+| `npm run test:e2e` | Funcional con Selenium + Edge (`tests/e2e`, `HEADLESS=0` para ver el navegador) | `server:pruebas` y `dev` |
+
+Evidencias en `pruebas/evidencias/` y registro de casos, ejecución y defectos en `pruebas/PC09-PC10_Gestion_Pruebas_HU-004.xlsx`.
+
+> ⚠️ Si tu SQL Server local tiene TCP/IP deshabilitado, el puerto 1434 es la conexión de administrador (DAC), que solo admite **una** conexión: usa `DB_POOL_MAX=1` en `server/.env.pruebas` o, mejor, habilita TCP/IP (puerto 1433) en SQL Server Configuration Manager.
+
+---
+
 ## 👤 Cuentas de Acceso
 
 La autenticación se valida en el servidor: contraseñas hasheadas con **bcrypt** y sesión mediante **JWT**. El script SQL crea estas cuentas **sin contraseña utilizable**; asígnala con:
