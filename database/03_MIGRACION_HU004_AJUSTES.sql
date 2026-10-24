@@ -2,6 +2,8 @@
 -- SISTEMA DE CONTROL DE INVENTARIO - "REPRESENTACIONES MARTÍN"
 -- Migración HU-004 (Registro de mermas justificadas) para bases ya creadas
 --
+-- * Actualiza sp_RegistrarMovimiento: la bitácora guarda el SKU real y la observación
+--   (motivo y justificación del ajuste).
 -- * Actualiza sp_AjusteInventarioManual: folio único, validaciones de negocio y
 --   resultado con el ajuste registrado.
 -- * Concede a martin_app (si existe) permiso para ejecutarlo. El procedimiento escribe
@@ -17,6 +19,131 @@ BEGIN
     RAISERROR('Estás conectado a master. Selecciona la base RepresentacionesMartinDB y vuelve a ejecutar.', 16, 1);
     SET NOEXEC ON;
 END
+GO
+
+CREATE OR ALTER PROCEDURE sp_RegistrarMovimiento
+    @IdProducto INT,
+    @IdUsuario INT,
+    @TipoMovimiento VARCHAR(30), -- 'ENTRADA_COMPRA', 'SALIDA_VENTA', 'AJUSTE_POSITIVO', 'AJUSTE_NEGATIVO', 'MERMA'
+    @Cantidad INT,
+    @CostoUnitario DECIMAL(12,2),
+    @DocumentoReferencia VARCHAR(100),
+    @Observacion VARCHAR(500) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- Validar existencia y estado del producto
+        DECLARE @StockActual INT, @StockNuevo INT, @NombreProducto VARCHAR(200), @CodigoSKU VARCHAR(50);
+        SELECT @StockActual = StockActual, @NombreProducto = Nombre, @CodigoSKU = CodigoSKU
+        FROM Productos WITH (UPDLOCK, HOLDLOCK)
+        WHERE IdProducto = @IdProducto AND Activo = 1;
+
+        IF @StockActual IS NULL
+        BEGIN
+            RAISERROR('El producto especificado no existe o está inactivo.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- Determinar efecto sobre el stock
+        IF @TipoMovimiento IN ('ENTRADA_COMPRA', 'AJUSTE_POSITIVO')
+        BEGIN
+            SET @StockNuevo = @StockActual + @Cantidad;
+        END
+        ELSE IF @TipoMovimiento IN ('SALIDA_VENTA', 'AJUSTE_NEGATIVO', 'MERMA')
+        BEGIN
+            IF @StockActual < @Cantidad
+            BEGIN
+                RAISERROR('Stock insuficiente para el producto %s. Disponible: %d, Solicitado: %d', 16, 1, @NombreProducto, @StockActual, @Cantidad);
+                ROLLBACK TRANSACTION;
+                RETURN;
+            END
+            SET @StockNuevo = @StockActual - @Cantidad;
+        END
+        ELSE
+        BEGIN
+            RAISERROR('Tipo de movimiento no reconocido.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        -- 1. Actualizar Stock en Productos
+        UPDATE Productos 
+        SET StockActual = @StockNuevo,
+            FechaUltimaActualizacion = SYSDATETIME()
+        WHERE IdProducto = @IdProducto;
+
+        -- 2. Insertar en MovimientosInventario
+        DECLARE @IdMovimiento BIGINT;
+        INSERT INTO MovimientosInventario (
+            IdProducto, IdUsuario, TipoMovimiento, Cantidad, 
+            StockAnterior, StockPosterior, CostoUnitario, DocumentoReferencia, Observacion, FechaMovimiento
+        )
+        VALUES (
+            @IdProducto, @IdUsuario, @TipoMovimiento, @Cantidad, 
+            @StockActual, @StockNuevo, @CostoUnitario, @DocumentoReferencia, @Observacion, SYSDATETIME()
+        );
+        SET @IdMovimiento = SCOPE_IDENTITY();
+
+        -- 3. Calcular y Asentar en Kardex (Promedio Ponderado)
+        DECLARE @CantEntrada INT = 0, @CostoEntrada DECIMAL(12,2) = 0, @TotEntrada DECIMAL(14,2) = 0;
+        DECLARE @CantSalida INT = 0, @CostoSalida DECIMAL(12,2) = 0, @TotSalida DECIMAL(14,2) = 0;
+        DECLARE @CostoPromedio DECIMAL(12,2), @TotalSaldo DECIMAL(14,2);
+
+        IF @TipoMovimiento IN ('ENTRADA_COMPRA', 'AJUSTE_POSITIVO')
+        BEGIN
+            SET @CantEntrada = @Cantidad;
+            SET @CostoEntrada = @CostoUnitario;
+            SET @TotEntrada = @Cantidad * @CostoUnitario;
+            SET @CostoPromedio = @CostoUnitario;
+            SET @TotalSaldo = @StockNuevo * @CostoPromedio;
+        END
+        ELSE
+        BEGIN
+            SET @CantSalida = @Cantidad;
+            SET @CostoSalida = @CostoUnitario;
+            SET @TotSalida = @Cantidad * @CostoUnitario;
+            SET @CostoPromedio = @CostoUnitario;
+            SET @TotalSaldo = @StockNuevo * @CostoPromedio;
+        END
+
+        INSERT INTO Kardex (
+            IdProducto, IdMovimiento, FechaRegistro, TipoOperacion, DocumentoReferencia,
+            CantidadEntrada, CostoUnitarioEntrada, TotalEntrada,
+            CantidadSalida, CostoUnitarioSalida, TotalSalida,
+            CantidadSaldo, CostoUnitarioPromedio, TotalSaldo
+        )
+        VALUES (
+            @IdProducto, @IdMovimiento, SYSDATETIME(), @TipoMovimiento, @DocumentoReferencia,
+            @CantEntrada, @CostoEntrada, @TotEntrada,
+            @CantSalida, @CostoSalida, @TotSalida,
+            @StockNuevo, @CostoPromedio, @TotalSaldo
+        );
+
+        -- 4. Registrar en Bitácora de Auditoría (RF-22)
+        INSERT INTO BitacoraAuditoria (IdUsuario, Accion, Modulo, Descripcion)
+        VALUES (
+            @IdUsuario, 
+            'MOVIMIENTO_' + @TipoMovimiento, 
+            'INVENTARIO', 
+            -- SKU real (antes se escribía el IdProducto) y la observación, que en los ajustes contiene motivo y justificación (HU-004 CA-2)
+            CONCAT('Producto: ', @NombreProducto, ' (SKU: ', @CodigoSKU, '), Cantidad: ', @Cantidad, ', Stock Anterior: ', @StockActual, ', Stock Nuevo: ', @StockNuevo, ', Doc: ', @DocumentoReferencia,
+                   CASE WHEN LEN(ISNULL(@Observacion, '')) > 0 THEN CONCAT(' | ', @Observacion) ELSE '' END)
+        );
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
+END;
 GO
 
 CREATE OR ALTER PROCEDURE sp_AjusteInventarioManual

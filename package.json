@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:cobertura": "vitest run --coverage",
+    "test:api": "node --env-file=server/.env.pruebas tests/api/ajustes.api.js",
     "test:e2e": "node --env-file=server/.env.pruebas tests/e2e/ajustes.e2e.js",
     "test-db": "node server/testConnection.js",
     "db:pruebas:reset": "node --env-file=server/.env.pruebas server/resetTestDb.js",

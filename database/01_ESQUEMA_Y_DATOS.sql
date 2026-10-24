@@ -422,8 +422,8 @@ BEGIN
         BEGIN TRANSACTION;
 
         -- Validar existencia y estado del producto
-        DECLARE @StockActual INT, @StockNuevo INT, @NombreProducto VARCHAR(200);
-        SELECT @StockActual = StockActual, @NombreProducto = Nombre 
+        DECLARE @StockActual INT, @StockNuevo INT, @NombreProducto VARCHAR(200), @CodigoSKU VARCHAR(50);
+        SELECT @StockActual = StockActual, @NombreProducto = Nombre, @CodigoSKU = CodigoSKU
         FROM Productos WITH (UPDLOCK, HOLDLOCK)
         WHERE IdProducto = @IdProducto AND Activo = 1;
 
@@ -515,7 +515,9 @@ BEGIN
             @IdUsuario, 
             'MOVIMIENTO_' + @TipoMovimiento, 
             'INVENTARIO', 
-            CONCAT('Producto: ', @NombreProducto, ' (SKU: ', @IdProducto, '), Cantidad: ', @Cantidad, ', Stock Anterior: ', @StockActual, ', Stock Nuevo: ', @StockNuevo, ', Doc: ', @DocumentoReferencia)
+            -- SKU real (antes se escribía el IdProducto) y la observación, que en los ajustes contiene motivo y justificación (HU-004 CA-2)
+            CONCAT('Producto: ', @NombreProducto, ' (SKU: ', @CodigoSKU, '), Cantidad: ', @Cantidad, ', Stock Anterior: ', @StockActual, ', Stock Nuevo: ', @StockNuevo, ', Doc: ', @DocumentoReferencia,
+                   CASE WHEN LEN(ISNULL(@Observacion, '')) > 0 THEN CONCAT(' | ', @Observacion) ELSE '' END)
         );
 
         COMMIT TRANSACTION;
