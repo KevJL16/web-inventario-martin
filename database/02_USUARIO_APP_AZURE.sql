@@ -7,6 +7,7 @@
 --   * Lectura de todas las tablas y vistas (db_datareader).
 --   * INSERT en BitacoraAuditoria, Kardex, MovimientosInventario, PasswordResets, Usuarios.
 --   * UPDATE en PasswordResets, Productos, Usuarios.
+--   * EXECUTE en sp_AjusteInventarioManual (HU-004: registra el ajuste, stock, Kardex y bitácora).
 --   * Ningún DELETE ni cambios de esquema: la bitácora de auditoría no se puede alterar.
 --
 -- Cómo usarlo:
@@ -58,6 +59,7 @@ GRANT INSERT ON dbo.MovimientosInventario TO martin_app;
 GRANT INSERT, UPDATE ON dbo.PasswordResets TO martin_app;
 GRANT UPDATE ON dbo.Productos             TO martin_app;
 GRANT INSERT, UPDATE ON dbo.Usuarios      TO martin_app;
+GRANT EXECUTE ON dbo.sp_AjusteInventarioManual TO martin_app;
 GO
 
 PRINT 'Permisos de martin_app aplicados.';
