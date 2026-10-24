@@ -5,7 +5,6 @@
 
 import { ProductModel } from '../models/ProductModel.js';
 import { MovementModel, MovementType } from '../models/MovementModel.js';
-import { AdjustmentModel, AdjustmentTypes } from '../models/AdjustmentModel.js';
 import { OrderModel } from '../models/OrderModel.js';
 import { randomDigits } from '../utils/random.js';
 
@@ -142,76 +141,6 @@ export const InventoryController = {
     return { success: true, movement, newStock };
   },
 
-  /**
-   * RF-20: Registrar Ajuste de Stock Justificado (Mermas / Daños / Conteos)
-   */
-  registerAdjustment: ({
-    productoId,
-    tipoAjuste,
-    cantidadAjuste,
-    motivo,
-    detalle,
-    usuario,
-    products,
-    setProducts,
-    setMovements,
-    setKardex,
-    setAdjustments,
-    logAction
-  }) => {
-    const product = products.find(p => p.id === Number(productoId));
-    if (!product) return { success: false, message: 'Producto no encontrado.' };
-
-    const validation = AdjustmentModel.validate(product.stockActual, tipoAjuste, cantidadAjuste, motivo);
-    if (!validation.isValid) {
-      return { success: false, message: validation.errors.join(' ') };
-    }
-
-    const qty = Number(cantidadAjuste);
-    const folio = `AJU-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${randomDigits(3)}`;
-
-    let tipoMov = MovementType.MERMA;
-    if (tipoAjuste === AdjustmentTypes.FALTANTE) tipoMov = MovementType.AJUSTE_NEGATIVO;
-    if (tipoAjuste === AdjustmentTypes.SOBRANTE) tipoMov = MovementType.AJUSTE_POSITIVO;
-
-    const newStock = AdjustmentModel.calculateNewStock(product.stockActual, tipoAjuste, qty);
-
-    const adjustmentRecord = {
-      id: Date.now(),
-      numeroAjuste: folio,
-      productoId: product.id,
-      productoNombre: product.nombre,
-      sku: product.sku,
-      tipoAjuste,
-      cantidadAjustada: qty,
-      stockTeorico: product.stockActual,
-      stockFisico: newStock,
-      costoUnitario: product.costoCompra,
-      impactoEconomico: Math.round(qty * product.costoCompra * 100) / 100,
-      motivo: motivo.trim(),
-      detalle: detalle?.trim() || '',
-      responsable: usuario ? `${usuario.nombres} ${usuario.apellidos}` : 'Encargado de Almacén',
-      fecha: new Date().toISOString()
-    };
-
-    setAdjustments(prev => [adjustmentRecord, ...prev]);
-
-    // Asentar en movimientos y Kardex
-    return InventoryController.registerMovement({
-      productoId: product.id,
-      tipo: tipoMov,
-      cantidad: qty,
-      costoUnitario: product.costoCompra,
-      comprobante: folio,
-      observacion: `[Ajuste de Stock] Motivo: ${motivo}. Detalle: ${detalle || 'Sin detalle'}`,
-      usuario,
-      products,
-      setProducts,
-      setMovements,
-      setKardex,
-      logAction
-    });
-  },
 
   /**
    * RF-05: Crear Producto

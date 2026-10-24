@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useInventory } from '../context/InventoryContext';
 import { useAuth } from '../context/AuthContext';
+import { AdjustmentModel } from '../models/AdjustmentModel';
 import {
   Sliders,
   Plus,
@@ -19,6 +20,9 @@ export const AjustesStockView = () => {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const [form, setForm] = useState({
     productoId: products.length > 0 ? String(products[0].id) : '',
@@ -46,23 +50,38 @@ export const AjustesStockView = () => {
 
   const selectedProd = products.find(p => p.id === Number(form.productoId));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.detalle.trim()) {
-      alert('La justificación técnica detallada es obligatoria para realizar un ajuste de inventario.');
+    if (submitting) return;
+    setFormError('');
+
+    // Validación inmediata en el navegador; el servidor vuelve a validar al registrar
+    const validation = AdjustmentModel.validate(
+      selectedProd ? selectedProd.stockActual : 0,
+      form.tipoAjuste,
+      Number(form.cantidadAjuste),
+      form.motivo,
+      form.detalle
+    );
+    if (!selectedProd) validation.errors.unshift('Seleccione el producto afectado.');
+    if (!selectedProd || !validation.isValid) {
+      setFormError(validation.errors.join(' '));
       return;
     }
 
-    const res = registerAdjustment({
+    setSubmitting(true);
+    const res = await registerAdjustment({
       productoId: form.productoId,
       tipoAjuste: form.tipoAjuste,
       cantidadAjuste: Number(form.cantidadAjuste),
       motivo: form.motivo,
       detalle: form.detalle.trim()
     });
+    setSubmitting(false);
 
     if (res.success) {
       setModalOpen(false);
+      setSuccessMessage(res.message);
       setForm({
         productoId: products[0] ? String(products[0].id) : '',
         tipoAjuste: 'MERMA_DANO',
@@ -71,8 +90,14 @@ export const AjustesStockView = () => {
         detalle: ''
       });
     } else {
-      alert(res.message);
+      setFormError(res.message);
     }
+  };
+
+  const openModal = () => {
+    setFormError('');
+    setSuccessMessage('');
+    setModalOpen(true);
   };
 
   return (
@@ -94,13 +119,24 @@ export const AjustesStockView = () => {
 
         {!isGerencia && (
           <button
-            onClick={() => setModalOpen(true)}
+            onClick={openModal}
+            data-testid="btn-registrar-ajuste"
             className="px-4 py-2.5 rounded-xl bg-martin-orange-500 hover:bg-martin-orange-600 text-white text-xs font-bold transition-all shadow-sm flex items-center gap-2 cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Registrar Ajuste o Merma
           </button>
         )}
       </div>
+
+      {successMessage && (
+        <div
+          data-testid="ajuste-exito"
+          className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold rounded-xl flex items-center gap-2"
+        >
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          <span>{successMessage}</span>
+        </div>
+      )}
 
       {/* Buscador */}
       <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
@@ -109,6 +145,7 @@ export const AjustesStockView = () => {
           <input
             type="text"
             value={searchTerm}
+            data-testid="buscar-ajuste"
             onChange={e => setSearchTerm(e.target.value)}
             placeholder="Buscar por N° Folio, producto o motivo de merma..."
             className="w-full pl-10 pr-4 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-martin-orange-500 focus:outline-none bg-slate-50/50"
@@ -151,7 +188,7 @@ export const AjustesStockView = () => {
                   const fechaValida = !isNaN(fechaObj.getTime());
 
                   return (
-                    <tr key={a.id} className="hover:bg-slate-50/70 transition-colors">
+                    <tr key={a.id} data-testid="fila-ajuste" className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3 px-4 font-mono font-bold text-slate-900">{a.numeroAjuste || `AJU-${a.id}`}</td>
                       <td className="py-3 px-3 font-mono text-slate-500 whitespace-nowrap">
                         {fechaValida ? fechaObj.toLocaleDateString('es-PE') : ''} {fechaValida ? fechaObj.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' }) : ''}
@@ -214,10 +251,22 @@ export const AjustesStockView = () => {
               <button onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-white">✕</button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto">
+            <form onSubmit={handleSubmit} noValidate className="p-4 sm:p-6 space-y-4 overflow-y-auto">
+              {formError && (
+                <div
+                  data-testid="ajuste-error"
+                  role="alert"
+                  className="p-3 bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold rounded-xl flex items-start gap-2"
+                >
+                  <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                  <span>{formError}</span>
+                </div>
+              )}
+
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">Producto Afectado *</label>
                 <select
+                  data-testid="ajuste-producto"
                   value={form.productoId}
                   onChange={e => setForm({ ...form, productoId: e.target.value })}
                   className="w-full text-xs font-semibold px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-martin-orange-500 focus:outline-none bg-white"
@@ -234,6 +283,7 @@ export const AjustesStockView = () => {
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">Naturaleza del Ajuste *</label>
                   <select
+                    data-testid="ajuste-tipo"
                     value={form.tipoAjuste}
                     onChange={e => setForm({ ...form, tipoAjuste: e.target.value })}
                     className="w-full text-xs font-semibold px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-martin-orange-500 focus:outline-none bg-white"
@@ -250,6 +300,7 @@ export const AjustesStockView = () => {
                     type="number"
                     min="1"
                     required
+                    data-testid="ajuste-cantidad"
                     value={form.cantidadAjuste}
                     onChange={e => setForm({ ...form, cantidadAjuste: e.target.value })}
                     className="w-full text-xs font-bold px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-martin-orange-500 focus:outline-none"
@@ -260,6 +311,7 @@ export const AjustesStockView = () => {
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">Motivo Frecuente</label>
                 <select
+                  data-testid="ajuste-motivo"
                   value={form.motivo}
                   onChange={e => setForm({ ...form, motivo: e.target.value })}
                   className="w-full text-xs font-semibold px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-martin-orange-500 focus:outline-none bg-white"
@@ -276,7 +328,7 @@ export const AjustesStockView = () => {
                 </label>
                 <textarea
                   rows={3}
-                  required
+                  data-testid="ajuste-detalle"
                   value={form.detalle}
                   onChange={e => setForm({ ...form, detalle: e.target.value })}
                   placeholder="Detalle exactamente cómo ocurrió el daño, ubicación o discrepancia encontrada..."
@@ -309,9 +361,11 @@ export const AjustesStockView = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 text-xs font-bold text-white bg-martin-orange-500 hover:bg-martin-orange-600 rounded-xl shadow-md"
+                  disabled={submitting}
+                  data-testid="btn-asentar-ajuste"
+                  className="px-5 py-2 text-xs font-bold text-white bg-martin-orange-500 hover:bg-martin-orange-600 rounded-xl shadow-md disabled:opacity-60 disabled:cursor-wait"
                 >
-                  Asentar Ajuste en Inventario
+                  {submitting ? "Registrando..." : "Asentar Ajuste en Inventario"}
                 </button>
               </div>
             </form>
