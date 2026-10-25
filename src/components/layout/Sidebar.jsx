@@ -169,7 +169,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isOpen, setIsOpen }) => {
         {/* Lista de Navegación con scroll independiente */}
         <div className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
           <div className="px-3 py-1 mb-1">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
               Módulos del Sistema
             </p>
           </div>
@@ -205,7 +205,7 @@ export const Sidebar = ({ activeTab, setActiveTab, isOpen, setIsOpen }) => {
           </div>
           <p className="text-slate-900 font-bold truncate">{currentUser?.nombres}</p>
           <p className="text-slate-500 text-[10px]">Rol: <span className="text-martin-orange-700 font-bold">{currentUser?.rolNombre}</span></p>
-          <p className="text-[10px] text-slate-400 mt-1.5 border-t border-slate-200 pt-1.5">
+          <p className="text-[10px] text-slate-600 mt-1.5 border-t border-slate-200 pt-1.5">
             Control de Accesos
           </p>
         </div>

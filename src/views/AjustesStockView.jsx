@@ -121,7 +121,7 @@ export const AjustesStockView = () => {
           <button
             onClick={openModal}
             data-testid="btn-registrar-ajuste"
-            className="px-4 py-2.5 rounded-xl bg-martin-orange-500 hover:bg-martin-orange-600 text-white text-xs font-bold transition-all shadow-sm flex items-center gap-2 cursor-pointer"
+            className="px-4 py-2.5 rounded-xl bg-martin-orange-700 hover:bg-martin-orange-800 text-white text-xs font-bold transition-all shadow-sm flex items-center gap-2 cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Registrar Ajuste o Merma
           </button>
@@ -195,7 +195,7 @@ export const AjustesStockView = () => {
                       </td>
                       <td className="py-3 px-3">
                         <p className="font-bold text-slate-900">{a.productoNombre || 'Producto sin nombre'}</p>
-                        <p className="text-[10px] font-mono text-slate-400 font-bold">{sku}</p>
+                        <p className="text-[10px] font-mono text-slate-500 font-bold">{sku}</p>
                       </td>
                       <td className="py-3 px-3 text-center">
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
@@ -237,18 +237,18 @@ export const AjustesStockView = () => {
       {/* Modal de Registro de Ajuste / Merma */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 animate-fade-in max-h-[90vh] flex flex-col">
+          <div role="dialog" aria-modal="true" aria-labelledby="ajuste-titulo" className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 animate-fade-in max-h-[90vh] flex flex-col">
             <div className="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between shrink-0">
               <div className="flex items-center space-x-3">
                 <div className="w-9 h-9 rounded-xl bg-martin-orange-500 flex items-center justify-center">
                   <Sliders className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold">Acta de Ajuste de Stock y Merma</h3>
+                  <h2 id="ajuste-titulo" className="text-base font-bold">Acta de Ajuste de Stock y Merma</h2>
                   <p className="text-xs text-slate-400">Descuento o corrección obligatoriamente auditada</p>
                 </div>
               </div>
-              <button onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-white">✕</button>
+              <button type="button" aria-label="Cerrar" onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-white">✕</button>
             </div>
 
             <form onSubmit={handleSubmit} noValidate className="p-4 sm:p-6 space-y-4 overflow-y-auto">
@@ -264,8 +264,9 @@ export const AjustesStockView = () => {
               )}
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Producto Afectado *</label>
+                <label htmlFor="ajuste-producto" className="block text-xs font-bold text-slate-700 mb-1">Producto Afectado *</label>
                 <select
+                  id="ajuste-producto"
                   data-testid="ajuste-producto"
                   value={form.productoId}
                   onChange={e => setForm({ ...form, productoId: e.target.value })}
@@ -281,8 +282,9 @@ export const AjustesStockView = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Naturaleza del Ajuste *</label>
+                  <label htmlFor="ajuste-tipo" className="block text-xs font-bold text-slate-700 mb-1">Naturaleza del Ajuste *</label>
                   <select
+                    id="ajuste-tipo"
                     data-testid="ajuste-tipo"
                     value={form.tipoAjuste}
                     onChange={e => setForm({ ...form, tipoAjuste: e.target.value })}
@@ -295,8 +297,9 @@ export const AjustesStockView = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Cantidad a Ajustar *</label>
+                  <label htmlFor="ajuste-cantidad" className="block text-xs font-bold text-slate-700 mb-1">Cantidad a Ajustar *</label>
                   <input
+                    id="ajuste-cantidad"
                     type="number"
                     min="1"
                     required
@@ -309,8 +312,9 @@ export const AjustesStockView = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Motivo Frecuente</label>
+                <label htmlFor="ajuste-motivo" className="block text-xs font-bold text-slate-700 mb-1">Motivo Frecuente</label>
                 <select
+                  id="ajuste-motivo"
                   data-testid="ajuste-motivo"
                   value={form.motivo}
                   onChange={e => setForm({ ...form, motivo: e.target.value })}
@@ -323,10 +327,11 @@ export const AjustesStockView = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label htmlFor="ajuste-detalle" className="block text-xs font-bold text-slate-700 mb-1">
                   Justificación Técnica Detallada *
                 </label>
                 <textarea
+                  id="ajuste-detalle"
                   rows={3}
                   data-testid="ajuste-detalle"
                   value={form.detalle}
@@ -363,7 +368,7 @@ export const AjustesStockView = () => {
                   type="submit"
                   disabled={submitting}
                   data-testid="btn-asentar-ajuste"
-                  className="px-5 py-2 text-xs font-bold text-white bg-martin-orange-500 hover:bg-martin-orange-600 rounded-xl shadow-md disabled:opacity-60 disabled:cursor-wait"
+                  className="px-5 py-2 text-xs font-bold text-white bg-martin-orange-700 hover:bg-martin-orange-800 rounded-xl shadow-md disabled:opacity-60 disabled:cursor-wait"
                 >
                   {submitting ? "Registrando..." : "Asentar Ajuste en Inventario"}
                 </button>
