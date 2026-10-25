@@ -55,7 +55,7 @@ export const Navbar = ({ setActiveTab, openAuthModal, toggleSidebar, isSidebarOp
                 }}
               />
               <div className="hidden md:block border-l border-slate-200 pl-3">
-                <span className="text-[10px] font-black tracking-widest text-martin-orange-600 uppercase block leading-none">
+                <span className="text-[10px] font-black tracking-widest text-martin-orange-700 uppercase block leading-none">
                   Maderas & Construcción
                 </span>
                 <span className="text-xs font-bold text-slate-600 tracking-tight">
