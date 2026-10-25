@@ -422,8 +422,8 @@ BEGIN
         BEGIN TRANSACTION;
 
         -- Validar existencia y estado del producto
-        DECLARE @StockActual INT, @StockNuevo INT, @NombreProducto VARCHAR(200);
-        SELECT @StockActual = StockActual, @NombreProducto = Nombre 
+        DECLARE @StockActual INT, @StockNuevo INT, @NombreProducto VARCHAR(200), @CodigoSKU VARCHAR(50);
+        SELECT @StockActual = StockActual, @NombreProducto = Nombre, @CodigoSKU = CodigoSKU
         FROM Productos WITH (UPDLOCK, HOLDLOCK)
         WHERE IdProducto = @IdProducto AND Activo = 1;
 
@@ -515,7 +515,9 @@ BEGIN
             @IdUsuario, 
             'MOVIMIENTO_' + @TipoMovimiento, 
             'INVENTARIO', 
-            CONCAT('Producto: ', @NombreProducto, ' (SKU: ', @IdProducto, '), Cantidad: ', @Cantidad, ', Stock Anterior: ', @StockActual, ', Stock Nuevo: ', @StockNuevo, ', Doc: ', @DocumentoReferencia)
+            -- SKU real (antes se escribía el IdProducto) y la observación, que en los ajustes contiene motivo y justificación (HU-004 CA-2)
+            CONCAT('Producto: ', @NombreProducto, ' (SKU: ', @CodigoSKU, '), Cantidad: ', @Cantidad, ', Stock Anterior: ', @StockActual, ', Stock Nuevo: ', @StockNuevo, ', Doc: ', @DocumentoReferencia,
+                   CASE WHEN LEN(ISNULL(@Observacion, '')) > 0 THEN CONCAT(' | ', @Observacion) ELSE '' END)
         );
 
         COMMIT TRANSACTION;
@@ -542,34 +544,55 @@ BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
 
+    -- Validaciones de negocio (HU-004 / RF-20): los errores 5000x se devuelven al usuario
+    IF @TipoAjuste IS NULL OR @TipoAjuste NOT IN ('FALTANTE', 'SOBRANTE', 'MERMA_DANO')
+        THROW 50001, 'Tipo de ajuste no válido. Use FALTANTE, SOBRANTE o MERMA_DANO.', 1;
+    IF @CantidadAjuste IS NULL OR @CantidadAjuste <= 0
+        THROW 50002, 'La cantidad del ajuste debe ser mayor a 0.', 1;
+    IF LEN(LTRIM(RTRIM(ISNULL(@MotivoJustificado, '')))) = 0
+        THROW 50003, 'El motivo del ajuste es obligatorio.', 1;
+    IF LEN(LTRIM(RTRIM(ISNULL(@DetalleJustificacion, '')))) = 0
+        THROW 50004, 'La justificación técnica del ajuste es obligatoria.', 1;
+
     BEGIN TRY
         BEGIN TRANSACTION;
 
         DECLARE @StockActual INT, @CostoUnitario DECIMAL(12,2), @NuevoStockFisico INT;
         SELECT @StockActual = StockActual, @CostoUnitario = CostoCompra
-        FROM Productos
-        WHERE IdProducto = @IdProducto;
+        FROM Productos WITH (UPDLOCK, HOLDLOCK)
+        WHERE IdProducto = @IdProducto AND Activo = 1;
+
+        IF @StockActual IS NULL
+            THROW 50005, 'El producto especificado no existe o está inactivo.', 1;
 
         IF @TipoAjuste IN ('FALTANTE', 'MERMA_DANO')
             SET @NuevoStockFisico = @StockActual - @CantidadAjuste;
         ELSE
             SET @NuevoStockFisico = @StockActual + @CantidadAjuste;
 
-        -- Generar folio de ajuste
-        DECLARE @Folio VARCHAR(30) = CONCAT('AJU-', FORMAT(SYSDATETIME(), 'yyyyMMdd-HHmm'), '-', @IdProducto);
+        IF @NuevoStockFisico < 0
+        BEGIN
+            DECLARE @MsgStock NVARCHAR(200) = CONCAT('No se puede descontar más del stock actual (', @StockActual, ' unid.).');
+            THROW 50006, @MsgStock, 1;
+        END
 
+        -- Folio único derivado del Id: AJU-2026-00001 (el formato anterior por minuto podía repetirse)
+        DECLARE @IdAjuste INT, @Folio VARCHAR(30);
         INSERT INTO AjustesInventario (
             NumeroAjuste, IdProducto, IdUsuarioSolicitante, IdUsuarioAprobador,
             TipoAjuste, CantidadAjuste, StockSistema, StockFisicoReal,
             MotivoJustificado, DetalleJustificacion, FechaAjuste
         )
         VALUES (
-            @Folio, @IdProducto, @IdUsuarioSolicitante, @IdUsuarioAprobador,
+            CONCAT('TMP-', LEFT(REPLACE(CONVERT(VARCHAR(36), NEWID()), '-', ''), 24)), @IdProducto, @IdUsuarioSolicitante, @IdUsuarioAprobador,
             @TipoAjuste, @CantidadAjuste, @StockActual, @NuevoStockFisico,
-            @MotivoJustificado, @DetalleJustificacion, SYSDATETIME()
+            LTRIM(RTRIM(@MotivoJustificado)), LTRIM(RTRIM(@DetalleJustificacion)), SYSDATETIME()
         );
+        SET @IdAjuste = SCOPE_IDENTITY();
+        SET @Folio = CONCAT('AJU-', YEAR(SYSDATETIME()), '-', RIGHT(CONCAT('00000', @IdAjuste), 5));
+        UPDATE AjustesInventario SET NumeroAjuste = @Folio WHERE IdAjuste = @IdAjuste;
 
-        -- Registrar movimiento correspondiente
+        -- Registrar movimiento correspondiente (actualiza stock, Kardex y bitácora)
         DECLARE @TipoMov VARCHAR(30);
         IF @TipoAjuste = 'SOBRANTE'
             SET @TipoMov = 'AJUSTE_POSITIVO';
@@ -578,6 +601,7 @@ BEGIN
         ELSE
             SET @TipoMov = 'AJUSTE_NEGATIVO';
 
+        DECLARE @Observacion VARCHAR(500) = LEFT(CONCAT('[Ajuste] ', LTRIM(RTRIM(@MotivoJustificado)), ': ', LTRIM(RTRIM(@DetalleJustificacion))), 500);
         EXEC sp_RegistrarMovimiento
             @IdProducto = @IdProducto,
             @IdUsuario = @IdUsuarioAprobador,
@@ -585,9 +609,11 @@ BEGIN
             @Cantidad = @CantidadAjuste,
             @CostoUnitario = @CostoUnitario,
             @DocumentoReferencia = @Folio,
-            @Observacion = @DetalleJustificacion;
+            @Observacion = @Observacion;
 
         COMMIT TRANSACTION;
+
+        SELECT @IdAjuste AS IdAjuste, @Folio AS NumeroAjuste, @StockActual AS StockAnterior, @NuevoStockFisico AS StockNuevo;
     END TRY
     BEGIN CATCH
         IF @@TRANCOUNT > 0

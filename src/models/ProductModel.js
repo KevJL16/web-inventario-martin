@@ -11,6 +11,9 @@ export const StockStatus = {
   SOBRESTOCK: 'SOBRESTOCK'
 };
 
+// Convierte a número; vacío, null o undefined se tratan como no numéricos
+const toNumber = (value) => (value === '' || value === null || value === undefined ? NaN : Number(value));
+
 export const ProductModel = {
   /**
    * Calcula el estado de salud del stock de un producto
@@ -45,14 +48,20 @@ export const ProductModel = {
     if (!data.sku || !data.sku.trim()) errors.push('El SKU es obligatorio.');
     if (!data.nombre || !data.nombre.trim()) errors.push('El nombre del producto es obligatorio.');
     if (!data.codigoBarras || !data.codigoBarras.trim()) errors.push('El código de barras es obligatorio.');
-    if (Number(data.precioVenta) <= 0) errors.push('El precio de venta debe ser mayor a 0.');
-    if (Number(data.costoCompra) < 0) errors.push('El costo de compra no puede ser negativo.');
-    if (Number(data.precioVenta) < Number(data.costoCompra)) {
+    // Number('abc') es NaN y toda comparación con NaN es falsa: se valida que sean números
+    const precio = toNumber(data.precioVenta);
+    const costo = toNumber(data.costoCompra);
+    const minimo = toNumber(data.stockMinimo);
+    const maximo = toNumber(data.stockMaximo);
+
+    if (!Number.isFinite(precio) || precio <= 0) errors.push('El precio de venta debe ser mayor a 0.');
+    if (!Number.isFinite(costo) || costo < 0) errors.push('El costo de compra debe ser un número mayor o igual a 0.');
+    if (Number.isFinite(precio) && Number.isFinite(costo) && precio < costo) {
       errors.push('El precio de venta no puede ser inferior al costo de compra.');
     }
-    if (Number(data.stockMinimo) < 1) errors.push('El stock mínimo debe ser al menos 1.');
-    if (Number(data.stockMaximo) <= Number(data.stockMinimo)) {
-      errors.push('El stock máximo debe ser mayor al stock mínimo.');
+    if (!Number.isInteger(minimo) || minimo < 1) errors.push('El stock mínimo debe ser un número entero de al menos 1.');
+    if (!Number.isInteger(maximo) || !Number.isInteger(minimo) || maximo <= minimo) {
+      errors.push('El stock máximo debe ser un número entero mayor al stock mínimo.');
     }
 
     return {

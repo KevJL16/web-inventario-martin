@@ -1,0 +1,34 @@
+
+ RUN  v3.2.7 C:/Users/Kevin/Desktop/WEB INVENTARIO CLAUCOL/web-inventario-martin
+      Coverage enabled with v8
+
+ ✓ tests/unit/adjustmentRules.test.js (45 tests) 20ms
+ ✓ tests/unit/MovementModel.test.js (15 tests) 15ms
+ ✓ tests/unit/ProductModel.test.js (19 tests) 9ms
+ ✓ tests/unit/OrderModel.test.js (4 tests) 10ms
+ ✓ tests/unit/AdjustmentModel.test.js (15 tests) 11ms
+ ✓ tests/unit/seguridad.test.js (8 tests) 2755ms
+   ✓ Contraseñas (bcrypt) > el hash no contiene la contraseña y se verifica correctamente  1472ms
+   ✓ Contraseñas (bcrypt) > el hash ficticio no valida ninguna contraseña habitual  1062ms
+
+ Test Files  6 passed (6)
+      Tests  106 passed (106)
+   Start at  23:58:35
+   Duration  4.61s (transform 199ms, setup 0ms, collect 1.27s, tests 2.82s, environment 4ms, prepare 2.03s)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   93.38 |    96.29 |   95.23 |   93.38 |                   
+ server            |     100 |      100 |     100 |     100 |                   
+  ...tmentRules.js |     100 |      100 |     100 |     100 |                   
+  passwords.js     |     100 |      100 |     100 |     100 |                   
+ src/models        |   90.81 |     94.5 |   92.85 |   90.81 |                   
+  ...tmentModel.js |     100 |      100 |     100 |     100 |                   
+  MovementModel.js |     100 |    94.44 |     100 |     100 | 81-82             
+  OrderModel.js    |     100 |      100 |     100 |     100 |                   
+  ProductModel.js  |   74.03 |     90.9 |      80 |   74.03 | 77-103            
+ src/utils         |     100 |      100 |     100 |     100 |                   
+  random.js        |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------

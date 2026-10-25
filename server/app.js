@@ -3,6 +3,7 @@ import cors from 'cors';
 import { CORS_ORIGIN } from './config.js';
 import { getPool, sql } from './db.js';
 import { authRouter, requireAuth } from './auth.js';
+import { adjustmentsRouter } from './adjustments.js';
 
 // Aplicación Express sin app.listen(): la usan server.js (local) y api/index.js (Vercel)
 const app = express();
@@ -18,6 +19,9 @@ app.use('/api', authRouter);
 
 // A partir de aquí todos los endpoints requieren sesión válida
 app.use('/api', requireAuth);
+
+// Ajustes de inventario y mermas justificadas (HU-004)
+app.use('/api', adjustmentsRouter);
 
 // 1. Endpoint de verificación de estado de conexión a SQL Server
 app.get('/api/status', async (req, res) => {

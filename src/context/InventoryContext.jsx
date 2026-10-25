@@ -13,7 +13,7 @@ import {
 import { StorageModel } from '../models/StorageModel';
 import { InventoryController } from '../controllers/InventoryController';
 import { useAuth } from './AuthContext';
-import { apiFetch } from '../services/api';
+import { apiFetch, apiJson } from '../services/api';
 import { randomDigits } from '../utils/random';
 
 const InventoryContext = createContext();
@@ -55,6 +55,37 @@ export const InventoryProvider = ({ children }) => {
     }
   };
 
+  // Carga desde SQL Server los datos que gestiona la API: productos, movimientos, Kardex y ajustes
+  const loadFromServer = async () => {
+    try {
+      const [resProds, resMovs, resKardex, resAjustes] = await Promise.all([
+        apiFetch('/api/productos'),
+        apiFetch('/api/movimientos'),
+        apiFetch('/api/kardex'),
+        apiFetch('/api/ajustes')
+      ]);
+      if (resProds.ok) {
+        const sqlProds = await resProds.json();
+        if (Array.isArray(sqlProds) && sqlProds.length > 0) setProducts(sqlProds);
+      }
+      if (resMovs.ok) {
+        const sqlMovs = await resMovs.json();
+        if (Array.isArray(sqlMovs) && sqlMovs.length > 0) setMovements(sqlMovs);
+      }
+      if (resKardex.ok) {
+        const sqlKardex = await resKardex.json();
+        if (Array.isArray(sqlKardex) && sqlKardex.length > 0) setKardex(sqlKardex);
+      }
+      // Los ajustes solo existen en la base de datos: se muestra lo que devuelva, aunque esté vacío
+      if (resAjustes.ok) {
+        const sqlAjustes = await resAjustes.json();
+        if (Array.isArray(sqlAjustes)) setAdjustments(sqlAjustes);
+      }
+    } catch (err) {
+      console.warn('Backend SQL Server activo pero hubo un retraso en la carga:', err);
+    }
+  };
+
   // Carga inicial y sondeo periódico de SQL Server (la API exige sesión iniciada)
   useEffect(() => {
     if (!currentUser) {
@@ -65,26 +96,7 @@ export const InventoryProvider = ({ children }) => {
     const initDatabase = async () => {
       const connected = await checkDbStatus();
       if (connected) {
-        try {
-          const [resProds, resMovs] = await Promise.all([
-            apiFetch('/api/productos'),
-            apiFetch('/api/movimientos')
-          ]);
-          if (resProds.ok) {
-            const sqlProds = await resProds.json();
-            if (Array.isArray(sqlProds) && sqlProds.length > 0) {
-              setProducts(sqlProds);
-            }
-          }
-          if (resMovs.ok) {
-            const sqlMovs = await resMovs.json();
-            if (Array.isArray(sqlMovs) && sqlMovs.length > 0) {
-              setMovements(sqlMovs);
-            }
-          }
-        } catch (err) {
-          console.warn('Backend SQL Server activo pero hubo un retraso en la carga:', err);
-        }
+        await loadFromServer();
       }
     };
 
@@ -200,27 +212,36 @@ export const InventoryProvider = ({ children }) => {
   };
 
   // RF-20: Ajuste de Inventario y Mermas (Controlador MVC)
-  const registerAdjustment = ({ productoId, tipoAjuste, cantidadAjuste, motivo, detalle }) => {
-    const res = InventoryController.registerAdjustment({
-      productoId,
-      tipoAjuste,
-      cantidadAjuste,
-      motivo,
-      detalle,
-      usuario: currentUser,
-      products,
-      setProducts,
-      setMovements,
-      setKardex,
-      setAdjustments,
-      logAction
+  // HU-004: el ajuste se registra en SQL Server (sp_AjusteInventarioManual), que actualiza
+  // stock, movimiento, Kardex y bitácora en una transacción. Sin servidor no se registra,
+  // para que ninguna merma quede guardada solo en este navegador.
+  const registerAdjustment = async ({ productoId, tipoAjuste, cantidadAjuste, motivo, detalle }) => {
+    const { ok, data } = await apiJson('/api/ajustes', {
+      method: 'POST',
+      body: {
+        productoId: Number(productoId),
+        tipoAjuste,
+        cantidad: Number(cantidadAjuste),
+        motivo,
+        detalle
+      }
     });
 
-    if (res.success && res.movement) {
-      syncWithSqlServer(res.movement);
+    if (!ok) {
+      return { success: false, message: data.message || 'No se pudo registrar el ajuste.' };
     }
 
-    return res;
+    setIsDbConnected(true);
+    await loadFromServer();
+
+    const a = data.adjustment;
+    logAction(
+      'AJUSTE_INVENTARIO',
+      'ALMACEN',
+      `${a.numeroAjuste}: ${a.tipoAjuste} de ${a.cantidadAjustada} unid. de "${a.productoNombre}" (${a.sku}). Motivo: ${a.motivo}`
+    );
+
+    return { success: true, message: data.message, adjustment: a };
   };
 
   // RF-05: Alta de Producto (Controlador MVC)

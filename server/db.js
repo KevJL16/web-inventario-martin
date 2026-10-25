@@ -18,7 +18,9 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function connectWithRetry() {
   for (let attempt = 0; ; attempt++) {
-    const pool = new sql.ConnectionPool(dbConfig);
+    // Copia nueva en cada intento: mssql modifica el objeto options que recibe y un
+    // intento fallido dejaba la configuración alterada para los reintentos siguientes
+    const pool = new sql.ConnectionPool({ ...dbConfig, options: { ...dbConfig.options } });
     try {
       await pool.connect();
       pool.on('error', (err) => {

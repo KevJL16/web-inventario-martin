@@ -45,9 +45,14 @@ export const dbConfig = {
   // Azure SQL serverless puede tardar en reactivarse tras una pausa
   connectionTimeout: Number(process.env.DB_CONNECTION_TIMEOUT_MS) || 30000,
   requestTimeout: Number(process.env.DB_REQUEST_TIMEOUT_MS) || 30000,
+  // Máximo de conexiones simultáneas del pool (por defecto 10 de mssql)
+  pool: { max: Number(process.env.DB_POOL_MAX) || 10, min: 0 },
   options: {
     encrypt: process.env.DB_ENCRYPT === 'true',
     trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE !== 'false',
+    // Las fechas se guardan con SYSDATETIME(): en Azure es UTC (true); un SQL Server
+    // local guarda la hora local y debe usar DB_USE_UTC=false para no desfasarlas
+    useUTC: process.env.DB_USE_UTC !== 'false',
     enableArithAbort: true
   }
 };
