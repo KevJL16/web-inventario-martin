@@ -1,0 +1,100 @@
+{
+  "prueba": "HU-004 API /api/ajustes",
+  "url": "http://localhost:5000/api",
+  "fecha": "2026-10-25T00:32:07.304Z",
+  "aprobados": 13,
+  "fallidos": 0,
+  "casos": [
+    {
+      "id": "API-01",
+      "titulo": "Merma válida por Encargado de Almacén",
+      "esperado": "201 y stock 95 → 93",
+      "obtenido": "201; Ajuste AJU-2026-00002 registrado. Stock: 95 → 93.; stock 95 → 93",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "API-02",
+      "titulo": "Dos mermas seguidas del mismo producto (folio único)",
+      "esperado": "201 y folios distintos",
+      "obtenido": "201; folios AJU-2026-00002 y AJU-2026-00003",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "API-03",
+      "titulo": "Justificación técnica vacía",
+      "esperado": "400 con mensaje de validación",
+      "obtenido": "400; La justificación técnica es obligatoria.",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "API-04",
+      "titulo": "Justificación de menos de 10 caracteres",
+      "esperado": "400 con mensaje de validación",
+      "obtenido": "400; La justificación técnica debe tener al menos 10 caracteres.",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "API-05",
+      "titulo": "Cantidad 0",
+      "esperado": "400 con mensaje de validación",
+      "obtenido": "400; La cantidad del ajuste debe ser un número entero mayor a 0.",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "API-06",
+      "titulo": "Descontar más que el stock (stock 1, pide 2)",
+      "esperado": "400 con mensaje de validación",
+      "obtenido": "400; No se puede descontar más del stock actual (1 unid.).",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "API-07",
+      "titulo": "Producto dado de baja",
+      "esperado": "400 con mensaje de validación",
+      "obtenido": "400; El producto especificado no existe o está inactivo.",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "API-08",
+      "titulo": "Rol Gerencia intenta registrar un ajuste",
+      "esperado": "403",
+      "obtenido": "403; No tiene permisos para esta acción.",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "API-09",
+      "titulo": "Petición sin sesión",
+      "esperado": "401",
+      "obtenido": "401; Sesión no iniciada.",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "API-10",
+      "titulo": "Sobrante (+5) incrementa el stock",
+      "esperado": "201 y stock 91 → 96",
+      "obtenido": "201; stock 91 → 96",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "API-11",
+      "titulo": "Gerencia consulta el historial de ajustes",
+      "esperado": "200 con los ajustes registrados",
+      "obtenido": "200; 4 ajustes; incluye AJU-2026-00002, AJU-2026-00003, AJU-2026-00004: true",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "API-12",
+      "titulo": "Cada ajuste genera su asiento de Kardex",
+      "esperado": "3 asientos con folio AJU-",
+      "obtenido": "3 asientos: AJU-2026-00002, AJU-2026-00003, AJU-2026-00004",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "API-13",
+      "titulo": "La bitácora registra fecha, hora, cantidad, motivo y usuario",
+      "esperado": "3 registros completos",
+      "obtenido": "3 registros; ej.: MOVIMIENTO_MERMA por Jorge Luis Paredes Soto el 2026-10-25T00:32:06.780Z — Producto: Tablero Melamina Vesto Roble Cendra 18mm (SKU: MEL-VES-ROB-18), Cantidad: 2, Stock Anterior: 95, Stock Nuevo: 93, Doc: AJU-2026-00002 | [Ajuste] Tablero desportillado: Golpe de montacargas en la esquina durante la descarga",
+      "estado": "APROBADO"
+    }
+  ]
+}
