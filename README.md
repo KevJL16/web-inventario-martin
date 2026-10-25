@@ -100,7 +100,7 @@ El script de reinicio se niega a borrar cualquier base que no termine en `_Prueb
 
 Evidencias en `pruebas/evidencias/` y registro de casos, ejecución y defectos en `pruebas/PC09-PC10_Gestion_Pruebas_HU-004.xlsx`.
 
-> ⚠️ Si tu SQL Server local tiene TCP/IP deshabilitado, el puerto 1434 es la conexión de administrador (DAC), que solo admite **una** conexión: usa `DB_POOL_MAX=1` en `server/.env.pruebas` o, mejor, habilita TCP/IP (puerto 1433) en SQL Server Configuration Manager.
+> ⚠️ Conéctate siempre por el puerto **1433** con TCP/IP habilitado (SQL Server Configuration Manager → SQL Server Network Configuration → Protocols for MSSQLSERVER → TCP/IP → Enable, y reiniciar el servicio). El puerto 1434 local es la conexión de administrador (DAC): solo admite **una** conexión y solo a usuarios sysadmin, por lo que la web falla con `ECONNRESET` al abrir varias conexiones (DEF-10). Como último recurso, `DB_POOL_MAX=1` limita la API a una sola conexión.
 
 ---
 
