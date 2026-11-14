@@ -23,7 +23,8 @@
     "server": "node server/server.js",
     "set-password": "node server/setPassword.js",
     "test:a11y": "node --env-file=server/.env.pruebas tests/e2e/accesibilidad.e2e.js",
-    "test:lighthouse": "node --env-file=server/.env.pruebas tests/e2e/lighthouse.flow.js"
+    "test:lighthouse": "node --env-file=server/.env.pruebas tests/e2e/lighthouse.flow.js",
+    "reporte": "node tests/reporte-ejecucion.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

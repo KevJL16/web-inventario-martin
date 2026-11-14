@@ -99,6 +99,7 @@ El script de reinicio se niega a borrar cualquier base que no termine en `_Prueb
 | `npm run test:e2e` | Funcional con Selenium + Edge (`tests/e2e`, `HEADLESS=0` para ver el navegador) | `server:pruebas` y `dev` |
 | `npm run test:a11y` | Accesibilidad WCAG 2.1 A/AA con axe-core en Selenium y prueba de teclado | `server:pruebas` y `dev` |
 | `npm run test:lighthouse` | Lighthouse (Accesibilidad y Buenas prácticas) sobre el flujo de HU-004 | `server:pruebas` y `dev` |
+| `npm run reporte` | Reporte de ejecución consolidado (`pruebas/reporte/reporte-ejecucion.html`) con la última evidencia de cada suite | Evidencias generadas |
 
 Evidencias en `pruebas/evidencias/` y registro de casos, ejecución, defectos, trazabilidad, métricas, accesibilidad y riesgos en `pruebas/PC09-PC13_Gestion_Pruebas_HU-004.xlsx`. Reinicia la base (`npm run db:pruebas:reset`) antes de cada suite que registra ajustes. `EVIDENCIA_PC=pc12` guarda la evidencia en otra carpeta de práctica.
 
