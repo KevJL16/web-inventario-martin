@@ -77,7 +77,7 @@ En **Azure SQL Database** la base se crea desde el portal: conecta SSMS directam
 
 ---
 
-## 🧪 Pruebas (Calidad y Pruebas de Software, PC 5-10)
+## 🧪 Pruebas (Calidad y Pruebas de Software, PC 5-13)
 
 El caso de uso principal probado es la **HU-004 Registro de mermas justificadas** (`POST/GET /api/ajustes` y la vista "Ajustes y Mermas").
 
@@ -97,8 +97,10 @@ El script de reinicio se niega a borrar cualquier base que no termine en `_Prueb
 | `npm run test:cobertura` | Unitarias + cobertura (umbral en `vitest.config.js`) | Nada |
 | `npm run test:api` | API de ajustes (`tests/api`) | `server:pruebas` |
 | `npm run test:e2e` | Funcional con Selenium + Edge (`tests/e2e`, `HEADLESS=0` para ver el navegador) | `server:pruebas` y `dev` |
+| `npm run test:a11y` | Accesibilidad WCAG 2.1 A/AA con axe-core en Selenium y prueba de teclado | `server:pruebas` y `dev` |
+| `npm run test:lighthouse` | Lighthouse (Accesibilidad y Buenas prácticas) sobre el flujo de HU-004 | `server:pruebas` y `dev` |
 
-Evidencias en `pruebas/evidencias/` y registro de casos, ejecución y defectos en `pruebas/PC09-PC10_Gestion_Pruebas_HU-004.xlsx`.
+Evidencias en `pruebas/evidencias/` y registro de casos, ejecución, defectos, trazabilidad, métricas, accesibilidad y riesgos en `pruebas/PC09-PC13_Gestion_Pruebas_HU-004.xlsx`. Reinicia la base (`npm run db:pruebas:reset`) antes de cada suite que registra ajustes. `EVIDENCIA_PC=pc12` guarda la evidencia en otra carpeta de práctica.
 
 > ⚠️ Conéctate siempre por el puerto **1433** con TCP/IP habilitado (SQL Server Configuration Manager → SQL Server Network Configuration → Protocols for MSSQLSERVER → TCP/IP → Enable, y reiniciar el servicio). El puerto 1434 local es la conexión de administrador (DAC): solo admite **una** conexión y solo a usuarios sysadmin, por lo que la web falla con `ECONNRESET` al abrir varias conexiones (DEF-10). Como último recurso, `DB_POOL_MAX=1` limita la API a una sola conexión.
 
