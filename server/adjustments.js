@@ -7,15 +7,7 @@
 import { Router } from 'express';
 import { getPool, sql } from './db.js';
 import { requireRole } from './auth.js';
-import { validateAdjustmentInput, ADJUSTMENT_ROLES } from './adjustmentRules.js';
-
-// Errores de negocio lanzados con THROW 50001-50006 en sp_AjusteInventarioManual
-// y el 50000 de RAISERROR en sp_RegistrarMovimiento (p. ej. stock insuficiente)
-function businessErrorMessage(err) {
-  const number = err?.number ?? err?.originalError?.info?.number;
-  if (number >= 50000 && number <= 50099) return err.message;
-  return null;
-}
+import { validateAdjustmentInput, ADJUSTMENT_ROLES, businessErrorMessage } from './adjustmentRules.js';
 
 const ADJUSTMENT_COLUMNS = `
   a.IdAjuste AS id,

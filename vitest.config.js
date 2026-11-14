@@ -8,10 +8,12 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: [
+        'shared/**/*.js',
         'server/adjustmentRules.js',
         'server/passwords.js',
         'src/models/**/*.js',
-        'src/utils/**/*.js'
+        'src/utils/**/*.js',
+        'src/config/**/*.js'
       ],
       // StorageModel y UserModel no tienen lógica de negocio del caso de uso HU-004
       exclude: ['src/models/StorageModel.js', 'src/models/UserModel.js'],

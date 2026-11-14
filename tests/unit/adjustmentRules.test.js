@@ -7,7 +7,9 @@ import {
   DETALLE_MIN,
   DETALLE_MAX,
   MOTIVO_MAX,
-  CANTIDAD_MAX
+  CANTIDAD_MAX,
+  validateStockAvailability,
+  businessErrorMessage
 } from '../../server/adjustmentRules.js';
 
 const valido = {
@@ -102,5 +104,47 @@ describe('validateAdjustmentInput (HU-004)', () => {
   it('solo autoriza a Administrador y Encargado de Almacén a registrar ajustes', () => {
     expect(ADJUSTMENT_ROLES).toEqual(['Administrador', 'Encargado de Almacén']);
     expect(ADJUSTMENT_ROLES).not.toContain('Gerencia');
+  });
+});
+
+// PC 12: reglas extraídas en la refactorización (antes no se podían probar)
+describe('validateStockAvailability (CA-3)', () => {
+  it('rechaza descontar más que el stock en mermas y faltantes', () => {
+    expect(validateStockAvailability(1, 'MERMA_DANO', 2)).toBe('No se puede descontar más del stock actual (1 unid.).');
+    expect(validateStockAvailability(0, 'FALTANTE', 1)).toBe('No se puede descontar más del stock actual (0 unid.).');
+  });
+
+  it('permite descontar exactamente todo el stock (valor límite)', () => {
+    expect(validateStockAvailability(5, 'MERMA_DANO', 5)).toBeNull();
+  });
+
+  it('no limita los sobrantes ni los tipos desconocidos', () => {
+    expect(validateStockAvailability(0, 'SOBRANTE', 500)).toBeNull();
+    expect(validateStockAvailability(0, 'TRASLADO', 500)).toBeNull();
+  });
+
+  it('no repite el error si la cantidad ya es inválida', () => {
+    expect(validateStockAvailability(1, 'MERMA_DANO', -3)).toBeNull();
+    expect(validateStockAvailability(1, 'MERMA_DANO', 2.5)).toBeNull();
+  });
+});
+
+describe('businessErrorMessage (errores del procedimiento almacenado)', () => {
+  it.each([50000, 50001, 50006, 50099])('muestra al usuario el error de negocio %i', (number) => {
+    expect(businessErrorMessage({ number, message: 'Regla de negocio' })).toBe('Regla de negocio');
+  });
+
+  it('lee el número desde originalError.info (formato de mssql)', () => {
+    expect(businessErrorMessage({ originalError: { info: { number: 50003 } }, message: 'El motivo es obligatorio.' }))
+      .toBe('El motivo es obligatorio.');
+  });
+
+  it.each([49999, 50100, 2627, 547])('oculta el error técnico %i', (number) => {
+    expect(businessErrorMessage({ number, message: 'Detalle interno de SQL Server' })).toBeNull();
+  });
+
+  it('oculta errores sin número', () => {
+    expect(businessErrorMessage(new Error('ECONNRESET'))).toBeNull();
+    expect(businessErrorMessage(undefined)).toBeNull();
   });
 });
