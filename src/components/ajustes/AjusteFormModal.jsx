@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AlertTriangle, Sliders } from 'lucide-react';
 import { AdjustmentModel } from '../../models/AdjustmentModel';
 import { MOTIVOS_PREDEFINIDOS, TIPOS_AJUSTE, crearFormularioInicial } from './ajustesConfig';
 
 const campoClases = 'w-full text-xs px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-martin-orange-500 focus:outline-none';
 const etiquetaClases = 'block text-xs font-bold text-slate-700 mb-1';
+const ENFOCABLES = 'button:not([disabled]), select:not([disabled]), input:not([disabled]), textarea:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
 
 /**
  * Acta de ajuste o merma (HU-004). Valida en el navegador con las mismas reglas
@@ -14,6 +15,37 @@ export const AjusteFormModal = ({ products, onRegister, onClose }) => {
   const [form, setForm] = useState(() => crearFormularioInicial(products));
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
+  const dialogRef = useRef(null);
+  const primerCampoRef = useRef(null);
+
+  // Accesibilidad con teclado (PC 13, DEF-18; WCAG 2.1.2 y 2.4.3): al abrir, el foco
+  // entra al primer campo; al cerrar, vuelve al botón que abrió el diálogo
+  useEffect(() => {
+    const anterior = document.activeElement;
+    primerCampoRef.current?.focus();
+    return () => anterior?.focus?.();
+  }, []);
+
+  // Escape cierra el diálogo y Tab / Shift+Tab no dejan salir el foco mientras está abierto
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      onClose();
+      return;
+    }
+    if (e.key !== 'Tab' || !dialogRef.current) return;
+    const enfocables = [...dialogRef.current.querySelectorAll(ENFOCABLES)];
+    if (!enfocables.length) return;
+    const primero = enfocables[0];
+    const ultimo = enfocables[enfocables.length - 1];
+    if (e.shiftKey && document.activeElement === primero) {
+      e.preventDefault();
+      ultimo.focus();
+    } else if (!e.shiftKey && document.activeElement === ultimo) {
+      e.preventDefault();
+      primero.focus();
+    }
+  };
 
   const selectedProd = products.find((p) => p.id === Number(form.productoId));
   const actualizar = (campo) => (e) => setForm({ ...form, [campo]: e.target.value });
@@ -54,7 +86,7 @@ export const AjusteFormModal = ({ products, onRegister, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
-      <div role="dialog" aria-modal="true" aria-labelledby="ajuste-titulo" className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 animate-fade-in max-h-[90vh] flex flex-col">
+      <div ref={dialogRef} onKeyDown={handleKeyDown} role="dialog" aria-modal="true" aria-labelledby="ajuste-titulo" className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 animate-fade-in max-h-[90vh] flex flex-col">
         <div className="bg-slate-900 text-white p-4 sm:p-5 flex items-center justify-between shrink-0">
           <div className="flex items-center space-x-3">
             <div className="w-9 h-9 rounded-xl bg-martin-orange-500 flex items-center justify-center">
@@ -83,6 +115,7 @@ export const AjusteFormModal = ({ products, onRegister, onClose }) => {
           <div>
             <label htmlFor="ajuste-producto" className={etiquetaClases}>Producto Afectado *</label>
             <select
+              ref={primerCampoRef}
               id="ajuste-producto"
               data-testid="ajuste-producto"
               value={form.productoId}
