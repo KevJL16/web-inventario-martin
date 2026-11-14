@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import logoMartin from '../../assets/logo_martin.png';
+import { canAccessModule } from '../../config/modulePermissions';
 import {
   LayoutDashboard,
   Package,
@@ -22,90 +23,77 @@ export const Sidebar = ({ activeTab, setActiveTab, isOpen, setIsOpen }) => {
   const { currentUser } = useAuth();
   const rol = currentUser?.rolNombre || 'Administrador';
 
-  // Configuración de elementos de menú con permisos según roles
+  // Elementos del menú; los roles salen de la matriz única src/config/modulePermissions.js
   const menuItems = [
     {
       id: 'dashboard',
       label: 'Dashboard Ejecutivo',
-      icon: LayoutDashboard,
-      roles: ['Administrador', 'Gerencia', 'Encargado de Almacén']
+      icon: LayoutDashboard
     },
     {
       id: 'catalogo',
       label: 'Catálogo de Productos',
-      icon: Package,
-      roles: ['Administrador', 'Gerencia', 'Encargado de Almacén', 'Vendedor']
+      icon: Package
     },
     {
       id: 'almacen',
       label: 'Ubicaciones y Racks 2D',
-      icon: MapPin,
-      roles: ['Administrador', 'Gerencia', 'Encargado de Almacén']
+      icon: MapPin
     },
     {
       id: 'quickstock',
       label: 'Consulta Rápida Stock',
-      icon: Zap,
-      roles: ['Administrador', 'Encargado de Almacén', 'Vendedor']
+      icon: Zap
     },
     {
       id: 'movimientos',
       label: 'Historial Movimientos',
-      icon: ArrowLeftRight,
-      roles: ['Administrador', 'Gerencia', 'Encargado de Almacén', 'Vendedor']
+      icon: ArrowLeftRight
     },
     {
       id: 'kardex',
       label: 'Entradas y Salidas',
-      icon: BookOpen,
-      roles: ['Administrador', 'Gerencia', 'Encargado de Almacén']
+      icon: BookOpen
     },
     {
       id: 'ajustes',
       label: 'Ajustes y Mermas',
-      icon: Sliders,
-      roles: ['Administrador', 'Encargado de Almacén']
+      icon: Sliders
     },
     {
       id: 'ordenes',
       label: 'Proveedores y Compras',
-      icon: Truck,
-      roles: ['Administrador', 'Gerencia', 'Encargado de Almacén']
+      icon: Truck
     },
     {
       id: 'rotacion',
       label: 'Rotación ABC Demanda',
-      icon: TrendingUp,
-      roles: ['Administrador', 'Gerencia']
+      icon: TrendingUp
     },
     {
       id: 'reportes',
       label: 'Reportes y Valorizado',
-      icon: FileText,
-      roles: ['Administrador', 'Gerencia']
+      icon: FileText
     },
     {
       id: 'cierre',
       label: 'Cierre Diario',
-      icon: Clock,
-      roles: ['Administrador', 'Gerencia', 'Encargado de Almacén']
+      icon: Clock
     },
     {
       id: 'usuarios',
       label: 'Usuarios y Accesos',
-      icon: Users,
-      roles: ['Administrador']
+      icon: Users
     },
     {
       id: 'auditoria',
       label: 'Bitácora Auditoría',
-      icon: ShieldAlert,
-      roles: ['Administrador', 'Gerencia']
+      icon: ShieldAlert
     }
   ];
 
   // Solo renderizar las opciones a las que el perfil actual tiene acceso
-  const visibleMenuItems = menuItems.filter(item => item.roles.includes(rol));
+  const visibleMenuItems = menuItems.filter(item => canAccessModule(item.id, rol));
 
   const handleItemClick = (id) => {
     setActiveTab(id);
