@@ -1,0 +1,12 @@
+Observación de la PC 13 sobre la estabilidad del análisis automático
+Las dos primeras corridas de tests/e2e/accesibilidad.e2e.js (sin guardar resultado
+porque el script se detuvo) reportaron "color-contrast" (serious) en el login
+(7 elementos), el módulo de ajustes (1) y el formulario (1). La tercera corrida, sin
+cambios en la web, reportó 0. Causa: axe analizaba durante la animación de entrada
+"animate-fade-in" (0,2 s, opacidad de 0 a 1); a mitad de la transición el texto es
+semitransparente y el contraste calculado baja.
+Medida: el script espera a que terminen las animaciones finitas antes de analizar
+(document.getAnimations()). Con esa espera, dos corridas seguidas dieron
+0 infracciones en las 5 pantallas, lo que confirma un falso positivo y no un defecto.
+Lección: un resultado de herramienta automática debe repetirse y validarse antes de
+registrarlo como defecto.

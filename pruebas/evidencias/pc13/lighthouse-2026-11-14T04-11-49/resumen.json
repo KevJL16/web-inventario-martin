@@ -1,0 +1,37 @@
+{
+  "prueba": "HU-004 Lighthouse (flujo de usuario)",
+  "url": "http://localhost:3000",
+  "navegador": "Edg/157.0.4341.60",
+  "lighthouse": "12.8.2",
+  "fecha": "2026-11-14T04:12:07.178Z",
+  "pasos": [
+    {
+      "paso": "Inicio de sesión",
+      "modo": "navigation",
+      "accesibilidad": 100,
+      "buenasPracticas": 100,
+      "auditoriasAccesibilidadFallidas": []
+    },
+    {
+      "paso": "Módulo Ajustes y Mermas",
+      "modo": "snapshot",
+      "accesibilidad": 100,
+      "buenasPracticas": 100,
+      "auditoriasAccesibilidadFallidas": []
+    },
+    {
+      "paso": "Formulario de acta abierto",
+      "modo": "snapshot",
+      "accesibilidad": 100,
+      "buenasPracticas": 100,
+      "auditoriasAccesibilidadFallidas": []
+    },
+    {
+      "paso": "Formulario con error de validación",
+      "modo": "snapshot",
+      "accesibilidad": 100,
+      "buenasPracticas": 100,
+      "auditoriasAccesibilidadFallidas": []
+    }
+  ]
+}
