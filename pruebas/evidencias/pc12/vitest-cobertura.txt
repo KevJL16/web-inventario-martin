@@ -1,0 +1,39 @@
+
+ RUN  v3.2.7 C:/Users/Kevin/Desktop/WEB INVENTARIO CLAUCOL/web-inventario-martin
+      Coverage enabled with v8
+
+ ✓ tests/unit/adjustmentRules.test.js (59 tests) 21ms
+ ✓ tests/unit/modulePermissions.test.js (8 tests) 6ms
+ ✓ tests/unit/MovementModel.test.js (15 tests) 19ms
+ ✓ tests/unit/ProductModel.test.js (19 tests) 14ms
+ ✓ tests/unit/AdjustmentModel.test.js (35 tests) 19ms
+ ✓ tests/unit/OrderModel.test.js (4 tests) 10ms
+ ✓ tests/unit/seguridad.test.js (8 tests) 3008ms
+   ✓ Contraseñas (bcrypt) > el hash no contiene la contraseña y se verifica correctamente  1757ms
+   ✓ Contraseñas (bcrypt) > el hash ficticio no valida ninguna contraseña habitual  1020ms
+
+ Test Files  7 passed (7)
+      Tests  148 passed (148)
+   Start at  23:03:45
+   Duration  5.15s (transform 182ms, setup 0ms, collect 1.23s, tests 3.10s, environment 3ms, prepare 3.60s)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   94.69 |     96.7 |   96.55 |   94.69 |                   
+ server            |     100 |      100 |     100 |     100 |                   
+  ...tmentRules.js |     100 |      100 |     100 |     100 |                   
+  passwords.js     |     100 |      100 |     100 |     100 |                   
+ shared            |     100 |      100 |     100 |     100 |                   
+  ...tmentRules.js |     100 |      100 |     100 |     100 |                   
+ src/config        |     100 |      100 |     100 |     100 |                   
+  ...ermissions.js |     100 |      100 |     100 |     100 |                   
+ src/models        |   91.45 |    94.91 |   93.75 |   91.45 |                   
+  ...tmentModel.js |     100 |    97.67 |     100 |     100 | 82                
+  MovementModel.js |     100 |    94.44 |     100 |     100 | 81-82             
+  OrderModel.js    |     100 |      100 |     100 |     100 |                   
+  ProductModel.js  |   74.03 |     90.9 |      80 |   74.03 | 77-103            
+ src/utils         |     100 |      100 |     100 |     100 |                   
+  random.js        |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------

@@ -1,0 +1,21 @@
+DEF-17 - Gerencia no puede consultar el historial de ajustes en la web (HU-004 CA-4)
+Detectado: PC 12, 2026-11-13, por el caso nuevo CPF-05 (Selenium).
+Ejecución con el fallo:   pruebas/evidencias/pc12/2026-11-14T04-00-29  (4 aprobados, 1 fallido)
+Resultado obtenido:       "Gerencia no ve el módulo Ajustes y Mermas"
+Resultado esperado (CA-4): Gerencia consulta el historial, sin botón de registro.
+Severidad: Media | Prioridad: Alta | Tipo: Funcional / control de acceso
+
+Causa raíz: la matriz de roles estaba duplicada en src/App.jsx (tabPermissions)
+y en src/components/layout/Sidebar.jsx (roles de cada opción del menú); ambas
+copias excluían a Gerencia del módulo "ajustes". La API sí lo permitía
+(GET /api/ajustes 200 para Gerencia, caso API-11), por eso las pruebas de API
+no lo detectaban.
+
+Corrección: matriz única src/config/modulePermissions.js usada por App y Sidebar,
+con Gerencia en "ajustes". El botón "Registrar ajuste" sigue oculto para
+Gerencia (vista) y la API responde 403 a su POST (caso API-08).
+Prueba unitaria nueva: tests/unit/modulePermissions.test.js (8 pruebas).
+
+Re-prueba: pruebas/evidencias/pc12/2026-11-14T04-04-03 (5 aprobados, 0 fallidos)
+Regresión de API: pruebas/evidencias/pc12/api-2026-11-14T04-04-28.json (16/16)
+Estado: Cerrado

@@ -1,0 +1,65 @@
+{
+  "prueba": "HU-004 Registro de mermas justificadas",
+  "herramienta": "Selenium WebDriver 4.51.0 + MicrosoftEdge 157.0.4341.60",
+  "url": "http://localhost:3000",
+  "usuario": "almacen@rep-martin.com",
+  "fecha": "2026-11-14T04:04:10.020Z",
+  "aprobados": 5,
+  "fallidos": 0,
+  "casos": [
+    {
+      "id": "CPF-01",
+      "titulo": "Registrar una merma justificada (flujo principal)",
+      "estado": "APROBADO",
+      "detalle": "AJU-2026-00002 registrado; stock 95 → 93; historial 1 → 2 filas",
+      "evidencias": [
+        "01-login.png",
+        "02-modulo-ajustes.png",
+        "03-formulario-merma.png",
+        "04-merma-registrada.png"
+      ],
+      "ms": 3271
+    },
+    {
+      "id": "CPF-02",
+      "titulo": "Rechazar una justificación técnica demasiado corta",
+      "estado": "APROBADO",
+      "detalle": "Mensaje mostrado: \"La justificación técnica debe tener al menos 10 caracteres.\"",
+      "evidencias": [
+        "05-error-justificacion-corta.png"
+      ],
+      "ms": 432
+    },
+    {
+      "id": "CPF-03",
+      "titulo": "Impedir descontar más que el stock disponible",
+      "estado": "APROBADO",
+      "detalle": "Stock 1, solicitado 2: \"No se puede descontar más del stock actual (1 unid.).\"",
+      "evidencias": [
+        "06-error-stock-insuficiente.png"
+      ],
+      "ms": 551
+    },
+    {
+      "id": "CPF-04",
+      "titulo": "Buscar en el historial el folio registrado",
+      "estado": "APROBADO",
+      "detalle": "AJU-2026-00002: 1 fila; término inexistente: 0 filas (\"No se han registrado actas de ajuste o mermas con estos criterios.\")",
+      "evidencias": [
+        "07-busqueda-folio.png",
+        "08-busqueda-sin-resultados.png"
+      ],
+      "ms": 456
+    },
+    {
+      "id": "CPF-05",
+      "titulo": "Gerencia solo consulta el historial de ajustes",
+      "estado": "APROBADO",
+      "detalle": "Historial visible (2 filas) y sin botón de registro",
+      "evidencias": [
+        "09-gerencia-solo-consulta.png"
+      ],
+      "ms": 911
+    }
+  ]
+}

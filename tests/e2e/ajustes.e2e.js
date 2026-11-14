@@ -17,6 +17,7 @@ import edge from 'selenium-webdriver/edge.js';
 
 const BASE_URL = process.env.E2E_BASE_URL || 'http://localhost:3000';
 const USER = 'almacen@rep-martin.com';
+const USER_GERENCIA = 'gerencia@rep-martin.com';
 const PASSWORD = process.env.TEST_USER_PASSWORD;
 const TIMEOUT = 20000;
 
@@ -38,11 +39,13 @@ if (!PASSWORD) {
 }
 
 const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-const outDir = path.resolve('pruebas', 'evidencias', 'pc08', stamp);
+// EVIDENCIA_PC permite guardar la ejecución de otra práctica (p. ej. pc12); por defecto pc08
+const outDir = path.resolve('pruebas', 'evidencias', process.env.EVIDENCIA_PC || 'pc08', stamp);
 fs.mkdirSync(outDir, { recursive: true });
 
 const resultados = [];
 let paso = 0;
+let folioRegistrado = null;
 
 const byTestId = (id) => By.css(`[data-testid="${id}"]`);
 
@@ -144,6 +147,7 @@ try {
     await driver.wait(async () => (await driver.findElements(byTestId('fila-ajuste'))).length === filasAntes + 1, TIMEOUT, 'El historial no muestra el nuevo ajuste');
     const fila = await driver.findElement(byTestId('fila-ajuste')).getText();
     const folio = mensaje.match(/AJU-\d{4}-\d{5}/)[0];
+    folioRegistrado = folio;
     assert(fila.includes(folio) && fila.includes(DATOS.merma.sku), `La primera fila no corresponde al ajuste ${folio}: "${fila.slice(0, 120)}"`);
     ev.push(await captura(driver, 'merma-registrada'));
     return `${folio} registrado; stock ${stockAntes} → ${stockEsperado}; historial ${filasAntes} → ${filasAntes + 1} filas`;
@@ -176,6 +180,40 @@ try {
     assert(texto.includes(`No se puede descontar más del stock actual (${stock} unid.)`), `Mensaje inesperado: "${texto}"`);
     await cerrarFormulario(driver);
     return `Stock ${stock}, solicitado ${DATOS.stockUno.cantidad}: "${texto}"`;
+  });
+
+  // PC 12 — CA-5: el folio registrado se puede ubicar en el historial
+  await caso('CPF-04', 'Buscar en el historial el folio registrado', async (ev) => {
+    assert(folioRegistrado, 'CPF-01 no registró un folio para buscar');
+    await escribir(driver, 'buscar-ajuste', folioRegistrado);
+    await driver.wait(async () => (await driver.findElements(byTestId('fila-ajuste'))).length === 1, TIMEOUT, 'La búsqueda por folio no dejó una sola fila');
+    const fila = await driver.findElement(byTestId('fila-ajuste')).getText();
+    assert(fila.includes(folioRegistrado), `La fila encontrada no es ${folioRegistrado}`);
+    ev.push(await captura(driver, 'busqueda-folio'));
+
+    await escribir(driver, 'buscar-ajuste', 'FOLIO-INEXISTENTE-999');
+    await driver.wait(async () => (await driver.findElements(byTestId('fila-ajuste'))).length === 0, TIMEOUT, 'Una búsqueda sin coincidencias mostró filas');
+    const vacio = await driver.findElement(By.xpath('//td[contains(., "No se han registrado actas")]')).getText();
+    ev.push(await captura(driver, 'busqueda-sin-resultados'));
+    await escribir(driver, 'buscar-ajuste', '');
+    return `${folioRegistrado}: 1 fila; término inexistente: 0 filas ("${vacio}")`;
+  });
+
+  // PC 12 — CA-4: Gerencia consulta el historial pero no puede registrar ajustes
+  await caso('CPF-05', 'Gerencia solo consulta el historial de ajustes', async (ev) => {
+    await driver.findElement(By.css('button[title^="Cerrar Sesión"]')).click();
+    await driver.wait(until.elementLocated(By.css('input[type="email"]')), TIMEOUT);
+    await driver.findElement(By.css('input[type="email"]')).sendKeys(USER_GERENCIA);
+    await driver.findElement(By.css('input[type="password"]')).sendKeys(PASSWORD);
+    await driver.findElement(By.css('form button[type="submit"]')).click();
+    const menu = await driver.wait(until.elementLocated(By.xpath('//aside//button[contains(normalize-space(.), "Ajustes y Mermas")]')), TIMEOUT, 'Gerencia no ve el módulo Ajustes y Mermas');
+    await menu.click();
+    await driver.wait(async () => (await driver.findElements(byTestId('fila-ajuste'))).length > 0, TIMEOUT, 'Gerencia no ve el historial');
+    const filas = (await driver.findElements(byTestId('fila-ajuste'))).length;
+    const botones = (await driver.findElements(byTestId('btn-registrar-ajuste'))).length;
+    ev.push(await captura(driver, 'gerencia-solo-consulta'));
+    assert(botones === 0, 'Gerencia ve el botón para registrar ajustes');
+    return `Historial visible (${filas} filas) y sin botón de registro`;
   });
 } finally {
   await driver.quit();
