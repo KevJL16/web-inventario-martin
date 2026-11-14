@@ -1,0 +1,132 @@
+
+[1m[46m RUN [49m[22m [36mv3.2.7 [39m[90mC:/Users/Kevin/Desktop/WEB INVENTARIO CLAUCOL/web-inventario-martin[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.calculateNewStock[2m > [22mdescuenta en mermas y faltantes[32m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.calculateNewStock[2m > [22msuma en sobrantes[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.calculateNewStock[2m > [22mno modifica el stock con un tipo desconocido[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.validate (HU-004)[2m > [22macepta una merma válida con justificación[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.validate (HU-004)[2m > [22mpermite descontar exactamente todo el stock (valor límite)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.validate (HU-004)[2m > [22mimpide descontar más del stock actual[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.validate (HU-004)[2m > [22mun sobrante no depende del stock actual[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.validate (HU-004)[2m > [22mrechaza la cantidad 0[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.validate (HU-004)[2m > [22mrechaza la cantidad -2[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.validate (HU-004)[2m > [22mrechaza la cantidad 1.5[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.validate (HU-004)[2m > [22mrechaza la cantidad NaN[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.validate (HU-004)[2m > [22mexige motivo[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.validate (HU-004)[2m > [22mexige una justificación técnica de longitud mínima[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.validate (HU-004)[2m > [22mrechaza un tipo de ajuste no válido[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/AdjustmentModel.test.js[2m > [22mAdjustmentModel.validate (HU-004)[2m > [22mmantiene la misma longitud mínima de justificación que el servidor[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/OrderModel.test.js[2m > [22mOrderModel.calculateTotals[2m > [22mcalcula subtotal, IGV (18 %) y total[32m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/OrderModel.test.js[2m > [22mOrderModel.calculateTotals[2m > [22muna orden vacía suma 0[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/OrderModel.test.js[2m > [22mOrderModel.calculateTotals[2m > [22mredondea el subtotal a céntimos[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/OrderModel.test.js[2m > [22mOrderModel.validate[2m > [22mexige proveedor y al menos un producto[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.isEntry / isExit[2m > [22mclasifica entradas y salidas[32m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.validate[2m > [22macepta una salida dentro del stock disponible[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.validate[2m > [22mrechaza una salida mayor al stock (control de negativos)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.validate[2m > [22muna entrada no depende del stock actual[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.validate[2m > [22mrechaza producto inexistente[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.validate[2m > [22mrechaza la cantidad 0[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.validate[2m > [22mrechaza la cantidad -1[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.validate[2m > [22mrechaza la cantidad abc[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.validate[2m > [22mrechaza una cantidad decimal[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.validate[2m > [22mrechaza un costo negativo[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.validate[2m > [22mrechaza un tipo de movimiento desconocido[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.createMovementRecord y createKardexEntry[2m > [22muna salida descuenta stock y calcula el total redondeado[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.createMovementRecord y createKardexEntry[2m > [22musa el costo de compra del producto si no se indica costo[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.createMovementRecord y createKardexEntry[2m > [22mel asiento de Kardex de una salida solo llena las columnas de salida[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/MovementModel.test.js[2m > [22mMovementModel.createMovementRecord y createKardexEntry[2m > [22mel asiento de Kardex de una entrada solo llena las columnas de entrada[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22macepta un ajuste completo y válido[32m 4[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mnormaliza el tipo a mayúsculas y recorta espacios del motivo y la justificación[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22macepta la cantidad enviada como texto numérico y como cantidadAjuste[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22macepta el tipo MERMA_DANO[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22macepta el tipo FALTANTE[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22macepta el tipo SOBRANTE[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza el tipo de ajuste undefined[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza el tipo de ajuste null[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza el tipo de ajuste [32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza el tipo de ajuste MERMA[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza el tipo de ajuste TRASLADO[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza el tipo de ajuste 5[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza la cantidad 0[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza la cantidad -1[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza la cantidad 2.5[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza la cantidad abc[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza la cantidad [32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza la cantidad    [32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza la cantidad null[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza la cantidad undefined[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza la cantidad NaN[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza la cantidad Infinity[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22macepta la cantidad máxima permitida y rechaza la siguiente (valor límite)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza el producto 0[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza el producto -3[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza el producto 1.5[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza el producto x[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza el producto null[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mexige el motivo (valor )[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mexige el motivo (valor    )[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mexige el motivo (valor null)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mexige el motivo (valor undefined)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mexige el motivo (valor 123)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mrechaza un motivo más largo que el permitido por la columna de la BD[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mexige la justificación técnica (valor )[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mexige la justificación técnica (valor     )[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mexige la justificación técnica (valor null)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mexige la justificación técnica (valor undefined)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22maplica los límites de longitud de la justificación (valores límite)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mcuenta la longitud de la justificación sin los espacios de los extremos[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mno falla con un cuerpo de petición inválido (undefined)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mno falla con un cuerpo de petición inválido (null)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mno falla con un cuerpo de petición inválido (texto)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22mno falla con un cuerpo de petición inválido (42)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/adjustmentRules.test.js[2m > [22mvalidateAdjustmentInput (HU-004)[2m > [22msolo autoriza a Administrador y Encargado de Almacén a registrar ajustes[32m 1[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.validate[2m > [22macepta un producto válido[32m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.validate[2m > [22mexige el campo sku (vacío o solo espacios)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.validate[2m > [22mexige el campo nombre (vacío o solo espacios)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.validate[2m > [22mexige el campo codigoBarras (vacío o solo espacios)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.validate[2m > [22mrechaza un precio de venta 0 o inferior al costo[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.validate[2m > [22macepta un precio igual al costo (valor límite)[32m 7[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.validate[2m > [22mexige stock máximo mayor que el mínimo[32m 3[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.validate[2m > [22mrechaza precioVenta no numérico (abc)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.validate[2m > [22mrechaza costoCompra no numérico (abc)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.validate[2m > [22mrechaza stockMinimo no numérico (diez)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.validate[2m > [22mrechaza stockMaximo no numérico (undefined)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.getStockStatus[2m > [22mstock 0 con mínimo 10 y máximo 100 es AGOTADO[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.getStockStatus[2m > [22mstock 5 con mínimo 10 y máximo 100 es CRITICO[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.getStockStatus[2m > [22mstock 10 con mínimo 10 y máximo 100 es BAJO[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.getStockStatus[2m > [22mstock 50 con mínimo 10 y máximo 100 es NORMAL[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.getStockStatus[2m > [22mstock 101 con mínimo 10 y máximo 100 es SOBRESTOCK[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.getStockStatus[2m > [22mCP-11: el producto de prueba (stock 10, mínimo 15) queda en estado bajo[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.calculateMargin[2m > [22mcalcula el margen bruto con un decimal[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/ProductModel.test.js[2m > [22mProductModel.calculateMargin[2m > [22mdevuelve 0 si el precio es 0[32m 0[2mms[22m[39m
+ [32m✓[39m tests/unit/seguridad.test.js[2m > [22mContraseñas (bcrypt)[2m > [22mel hash no contiene la contraseña y se verifica correctamente[33m 2339[2mms[22m[39m
+ [32m✓[39m tests/unit/seguridad.test.js[2m > [22mContraseñas (bcrypt)[2m > [22mel hash ficticio no valida ninguna contraseña habitual[33m 1350[2mms[22m[39m
+ [32m✓[39m tests/unit/seguridad.test.js[2m > [22mContraseñas (bcrypt)[2m > [22mlas contraseñas temporales tienen el formato esperado y no se repiten[32m 10[2mms[22m[39m
+ [32m✓[39m tests/unit/seguridad.test.js[2m > [22mTokens de recuperación[2m > [22mse guarda el SHA-256 del token, nunca el token[32m 2[2mms[22m[39m
+ [32m✓[39m tests/unit/seguridad.test.js[2m > [22mrandomDigits (folios y códigos)[2m > [22mgenera 1 dígitos sin cero inicial[32m 56[2mms[22m[39m
+ [32m✓[39m tests/unit/seguridad.test.js[2m > [22mrandomDigits (folios y códigos)[2m > [22mgenera 4 dígitos sin cero inicial[32m 52[2mms[22m[39m
+ [32m✓[39m tests/unit/seguridad.test.js[2m > [22mrandomDigits (folios y códigos)[2m > [22mgenera 10 dígitos sin cero inicial[32m 57[2mms[22m[39m
+ [32m✓[39m tests/unit/seguridad.test.js[2m > [22mrandomDigits (folios y códigos)[2m > [22mreparte los dígitos de forma aproximadamente uniforme[32m 132[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[32m106 passed[39m[22m[90m (106)[39m
+[2m   Start at [22m 22:55:11
+[2m   Duration [22m 7.01s[2m (transform 404ms, setup 0ms, collect 1.63s, tests 4.07s, environment 2ms, prepare 6.13s)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   93.52 |    96.29 |   95.23 |   93.52 |                   
+ server            |     100 |      100 |     100 |     100 |                   
+  ...tmentRules.js |     100 |      100 |     100 |     100 |                   
+  passwords.js     |     100 |      100 |     100 |     100 |                   
+ src/models        |   90.81 |     94.5 |   92.85 |   90.81 |                   
+  ...tmentModel.js |     100 |      100 |     100 |     100 |                   
+  MovementModel.js |     100 |    94.44 |     100 |     100 | 81-82             
+  OrderModel.js    |     100 |      100 |     100 |     100 |                   
+  ProductModel.js  |   74.03 |     90.9 |      80 |   74.03 | 77-103            
+ src/utils         |     100 |      100 |     100 |     100 |                   
+  random.js        |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------

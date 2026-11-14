@@ -1,0 +1,6 @@
+PC 11 - Inspección: validación del navegador vs. servidor (HU-004)
+Fecha: 2026-11-14T03:55:05.096Z
+
+Justificación de 501 caracteres: navegador=ACEPTA | servidor=rechaza (La justificación técnica no puede superar 500 caracteres.)
+Cantidad 100001 (sobrante): navegador=ACEPTA | servidor=rechaza (La cantidad del ajuste no puede superar 100000 unidades.)
+Motivo de 101 caracteres: navegador=ACEPTA | servidor=rechaza (El motivo no puede superar 100 caracteres.)
