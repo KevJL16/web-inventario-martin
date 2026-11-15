@@ -140,7 +140,7 @@ export const QuickStockView = () => {
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Escanee EAN-13 o escriba ej: 'MEL-VES' o 'Roble'..."
-            className="w-full pl-13 pr-4 py-4 text-base font-bold border-2 border-slate-200 rounded-xl focus:border-martin-green-500 focus:ring-4 focus:ring-martin-green-500/10 focus:outline-none bg-slate-50/50"
+            className="w-full pl-14 pr-4 py-4 text-base font-bold border-2 border-slate-200 rounded-xl focus:border-martin-green-500 focus:ring-4 focus:ring-martin-green-500/10 focus:outline-none bg-slate-50/50"
           />
         </div>
 

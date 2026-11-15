@@ -4,6 +4,7 @@ import { InventoryProvider } from './context/InventoryContext';
 import { Navbar } from './components/layout/Navbar';
 import { Sidebar } from './components/layout/Sidebar';
 import { AuthModal } from './components/auth/AuthModal';
+import { canAccessModule } from './config/modulePermissions';
 import {
   DashboardView,
   CatalogoView,
@@ -111,24 +112,8 @@ const MainLayout = () => {
 
   const rol = currentUser?.rolNombre || 'Administrador';
 
-  // Matriz de permisos para vistas
-  const tabPermissions = {
-    dashboard: ['Administrador', 'Gerencia', 'Encargado de Almacén'],
-    catalogo: ['Administrador', 'Gerencia', 'Encargado de Almacén', 'Vendedor'],
-    almacen: ['Administrador', 'Gerencia', 'Encargado de Almacén'],
-    quickstock: ['Administrador', 'Encargado de Almacén', 'Vendedor'],
-    movimientos: ['Administrador', 'Gerencia', 'Encargado de Almacén', 'Vendedor'],
-    kardex: ['Administrador', 'Gerencia', 'Encargado de Almacén'],
-    ajustes: ['Administrador', 'Encargado de Almacén'],
-    ordenes: ['Administrador', 'Gerencia', 'Encargado de Almacén'],
-    rotacion: ['Administrador', 'Gerencia'],
-    reportes: ['Administrador', 'Gerencia'],
-    cierre: ['Administrador', 'Gerencia', 'Encargado de Almacén'],
-    usuarios: ['Administrador'],
-    auditoria: ['Administrador', 'Gerencia']
-  };
-
-  const isAllowed = (tabPermissions[activeTab] || []).includes(rol);
+  // Matriz única de permisos por vista (src/config/modulePermissions.js)
+  const isAllowed = canAccessModule(activeTab, rol);
 
   const renderContent = () => {
     if (!isAllowed) {

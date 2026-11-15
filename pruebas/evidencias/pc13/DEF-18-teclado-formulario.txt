@@ -1,0 +1,18 @@
+DEF-18 - El formulario de ajuste no se puede usar bien solo con el teclado
+Detectado: PC 13, 2026-11-13, por el caso ACC-05 (Selenium, tests/e2e/accesibilidad.e2e.js).
+Ejecución con el fallo:  pruebas/evidencias/pc13/axe-2026-11-14T04-07-51  (5 aprobados, 1 fallido)
+Resultado obtenido:      "Al abrir el formulario el foco queda fuera del diálogo (en btn-registrar-ajuste)"
+Criterios WCAG 2.1:      2.4.3 Orden del foco (A), 2.1.2 Sin trampas de teclado / diálogo modal (A)
+Severidad: Media | Prioridad: Alta | Tipo: Accesibilidad
+Grupo afectado: personas que usan teclado o lector de pantalla (discapacidad visual o motriz).
+
+Revisión del código (AjusteFormModal.jsx antes de la corrección): además del foco
+inicial, el diálogo no atendía la tecla Escape, no retenía el foco con Tab dentro
+del modal y no devolvía el foco al botón que lo abrió. axe-core no detecta este
+problema (0 infracciones en ACC-03): hizo falta una prueba de teclado específica.
+
+Corrección: AjusteFormModal enfoca el primer campo al abrir, retiene Tab / Shift+Tab
+dentro del diálogo, cierra con Escape y devuelve el foco al botón de registro.
+Re-prueba: pruebas/evidencias/pc13/axe-2026-11-14T04-09-24 (6 aprobados, 0 fallidos)
+Regresión funcional: pruebas/evidencias/pc13/2026-11-14T04-12-29 (CPF-01..05, 5/5)
+Estado: Cerrado

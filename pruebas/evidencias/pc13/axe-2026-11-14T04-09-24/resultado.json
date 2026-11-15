@@ -1,0 +1,125 @@
+{
+  "prueba": "HU-004 Accesibilidad (axe-core + teclado)",
+  "url": "http://localhost:3000",
+  "navegador": "MicrosoftEdge 157.0.4341.60",
+  "motor": "axe-core 4.14 vía @axe-core/webdriverjs",
+  "reglas": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa"
+  ],
+  "fecha": "2026-11-14T04:09:33.310Z",
+  "aprobados": 6,
+  "fallidos": 0,
+  "casos": [
+    {
+      "id": "ACC-01",
+      "titulo": "Pantalla de inicio de sesión",
+      "tipo": "axe-core",
+      "estado": "APROBADO",
+      "detalle": "0 infracciones; 12 reglas aprobadas",
+      "axe": {
+        "reglasEvaluadas": 13,
+        "aprobadas": 12,
+        "revisionManual": [
+          "color-contrast"
+        ],
+        "infracciones": []
+      },
+      "evidencias": [
+        "01-login.png"
+      ],
+      "ms": 1571
+    },
+    {
+      "id": "ACC-02",
+      "titulo": "Módulo Ajustes y Mermas con historial (Almacén)",
+      "tipo": "axe-core",
+      "estado": "APROBADO",
+      "detalle": "0 infracciones; 19 reglas aprobadas",
+      "axe": {
+        "reglasEvaluadas": 20,
+        "aprobadas": 19,
+        "revisionManual": [
+          "color-contrast"
+        ],
+        "infracciones": []
+      },
+      "evidencias": [
+        "02-modulo-ajustes.png"
+      ],
+      "ms": 870
+    },
+    {
+      "id": "ACC-03",
+      "titulo": "Formulario de acta de ajuste abierto",
+      "tipo": "axe-core",
+      "estado": "APROBADO",
+      "detalle": "0 infracciones; 24 reglas aprobadas",
+      "axe": {
+        "reglasEvaluadas": 26,
+        "aprobadas": 24,
+        "revisionManual": [
+          "color-contrast",
+          "label-content-name-mismatch"
+        ],
+        "infracciones": []
+      },
+      "evidencias": [
+        "03-formulario.png"
+      ],
+      "ms": 929
+    },
+    {
+      "id": "ACC-04",
+      "titulo": "Formulario con error de validación anunciado",
+      "tipo": "axe-core",
+      "estado": "APROBADO",
+      "detalle": "0 infracciones; 24 reglas aprobadas",
+      "axe": {
+        "reglasEvaluadas": 26,
+        "aprobadas": 24,
+        "revisionManual": [
+          "color-contrast",
+          "label-content-name-mismatch"
+        ],
+        "infracciones": []
+      },
+      "evidencias": [
+        "04-formulario-error.png"
+      ],
+      "ms": 657
+    },
+    {
+      "id": "ACC-05",
+      "titulo": "Formulario operable con teclado (foco, orden y Escape)",
+      "tipo": "teclado",
+      "estado": "APROBADO",
+      "detalle": "Foco inicial dentro del diálogo; orden ajuste-producto > ajuste-tipo > ajuste-cantidad > ajuste-motivo > ajuste-detalle > Cancelar > btn-asentar-ajuste; foco atrapado; Escape cierra y devuelve el foco",
+      "evidencias": [
+        "05-teclado-orden.png"
+      ],
+      "ms": 487
+    },
+    {
+      "id": "ACC-06",
+      "titulo": "Historial de ajustes en modo consulta (Gerencia)",
+      "tipo": "axe-core",
+      "estado": "APROBADO",
+      "detalle": "0 infracciones; 19 reglas aprobadas",
+      "axe": {
+        "reglasEvaluadas": 20,
+        "aprobadas": 19,
+        "revisionManual": [
+          "color-contrast"
+        ],
+        "infracciones": []
+      },
+      "evidencias": [
+        "06-gerencia-consulta.png"
+      ],
+      "ms": 819
+    }
+  ]
+}

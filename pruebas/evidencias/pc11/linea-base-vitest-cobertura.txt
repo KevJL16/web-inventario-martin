@@ -1,0 +1,132 @@
+
+ RUN  v3.2.7 C:/Users/Kevin/Desktop/WEB INVENTARIO CLAUCOL/web-inventario-martin
+      Coverage enabled with v8
+
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.calculateNewStock > descuenta en mermas y faltantes 3ms
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.calculateNewStock > suma en sobrantes 0ms
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.calculateNewStock > no modifica el stock con un tipo desconocido 0ms
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.validate (HU-004) > acepta una merma válida con justificación 0ms
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.validate (HU-004) > permite descontar exactamente todo el stock (valor límite) 0ms
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.validate (HU-004) > impide descontar más del stock actual 0ms
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.validate (HU-004) > un sobrante no depende del stock actual 0ms
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.validate (HU-004) > rechaza la cantidad 0 0ms
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.validate (HU-004) > rechaza la cantidad -2 0ms
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.validate (HU-004) > rechaza la cantidad 1.5 0ms
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.validate (HU-004) > rechaza la cantidad NaN 0ms
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.validate (HU-004) > exige motivo 1ms
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.validate (HU-004) > exige una justificación técnica de longitud mínima 0ms
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.validate (HU-004) > rechaza un tipo de ajuste no válido 0ms
+ ✓ tests/unit/AdjustmentModel.test.js > AdjustmentModel.validate (HU-004) > mantiene la misma longitud mínima de justificación que el servidor 0ms
+ ✓ tests/unit/OrderModel.test.js > OrderModel.calculateTotals > calcula subtotal, IGV (18 %) y total 3ms
+ ✓ tests/unit/OrderModel.test.js > OrderModel.calculateTotals > una orden vacía suma 0 0ms
+ ✓ tests/unit/OrderModel.test.js > OrderModel.calculateTotals > redondea el subtotal a céntimos 0ms
+ ✓ tests/unit/OrderModel.test.js > OrderModel.validate > exige proveedor y al menos un producto 2ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.isEntry / isExit > clasifica entradas y salidas 3ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.validate > acepta una salida dentro del stock disponible 0ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.validate > rechaza una salida mayor al stock (control de negativos) 0ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.validate > una entrada no depende del stock actual 0ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.validate > rechaza producto inexistente 1ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.validate > rechaza la cantidad 0 0ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.validate > rechaza la cantidad -1 0ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.validate > rechaza la cantidad abc 0ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.validate > rechaza una cantidad decimal 0ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.validate > rechaza un costo negativo 0ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.validate > rechaza un tipo de movimiento desconocido 0ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.createMovementRecord y createKardexEntry > una salida descuenta stock y calcula el total redondeado 4ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.createMovementRecord y createKardexEntry > usa el costo de compra del producto si no se indica costo 0ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.createMovementRecord y createKardexEntry > el asiento de Kardex de una salida solo llena las columnas de salida 0ms
+ ✓ tests/unit/MovementModel.test.js > MovementModel.createMovementRecord y createKardexEntry > el asiento de Kardex de una entrada solo llena las columnas de entrada 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > acepta un ajuste completo y válido 4ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > normaliza el tipo a mayúsculas y recorta espacios del motivo y la justificación 2ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > acepta la cantidad enviada como texto numérico y como cantidadAjuste 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > acepta el tipo MERMA_DANO 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > acepta el tipo FALTANTE 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > acepta el tipo SOBRANTE 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza el tipo de ajuste undefined 1ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza el tipo de ajuste null 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza el tipo de ajuste  0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza el tipo de ajuste MERMA 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza el tipo de ajuste TRASLADO 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza el tipo de ajuste 5 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza la cantidad 0 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza la cantidad -1 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza la cantidad 2.5 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza la cantidad abc 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza la cantidad  0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza la cantidad     0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza la cantidad null 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza la cantidad undefined 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza la cantidad NaN 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza la cantidad Infinity 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > acepta la cantidad máxima permitida y rechaza la siguiente (valor límite) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza el producto 0 2ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza el producto -3 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza el producto 1.5 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza el producto x 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza el producto null 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > exige el motivo (valor ) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > exige el motivo (valor    ) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > exige el motivo (valor null) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > exige el motivo (valor undefined) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > exige el motivo (valor 123) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > rechaza un motivo más largo que el permitido por la columna de la BD 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > exige la justificación técnica (valor ) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > exige la justificación técnica (valor     ) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > exige la justificación técnica (valor null) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > exige la justificación técnica (valor undefined) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > aplica los límites de longitud de la justificación (valores límite) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > cuenta la longitud de la justificación sin los espacios de los extremos 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > no falla con un cuerpo de petición inválido (undefined) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > no falla con un cuerpo de petición inválido (null) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > no falla con un cuerpo de petición inválido (texto) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > no falla con un cuerpo de petición inválido (42) 0ms
+ ✓ tests/unit/adjustmentRules.test.js > validateAdjustmentInput (HU-004) > solo autoriza a Administrador y Encargado de Almacén a registrar ajustes 1ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.validate > acepta un producto válido 3ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.validate > exige el campo sku (vacío o solo espacios) 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.validate > exige el campo nombre (vacío o solo espacios) 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.validate > exige el campo codigoBarras (vacío o solo espacios) 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.validate > rechaza un precio de venta 0 o inferior al costo 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.validate > acepta un precio igual al costo (valor límite) 7ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.validate > exige stock máximo mayor que el mínimo 3ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.validate > rechaza precioVenta no numérico (abc) 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.validate > rechaza costoCompra no numérico (abc) 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.validate > rechaza stockMinimo no numérico (diez) 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.validate > rechaza stockMaximo no numérico (undefined) 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.getStockStatus > stock 0 con mínimo 10 y máximo 100 es AGOTADO 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.getStockStatus > stock 5 con mínimo 10 y máximo 100 es CRITICO 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.getStockStatus > stock 10 con mínimo 10 y máximo 100 es BAJO 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.getStockStatus > stock 50 con mínimo 10 y máximo 100 es NORMAL 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.getStockStatus > stock 101 con mínimo 10 y máximo 100 es SOBRESTOCK 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.getStockStatus > CP-11: el producto de prueba (stock 10, mínimo 15) queda en estado bajo 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.calculateMargin > calcula el margen bruto con un decimal 0ms
+ ✓ tests/unit/ProductModel.test.js > ProductModel.calculateMargin > devuelve 0 si el precio es 0 0ms
+ ✓ tests/unit/seguridad.test.js > Contraseñas (bcrypt) > el hash no contiene la contraseña y se verifica correctamente 2339ms
+ ✓ tests/unit/seguridad.test.js > Contraseñas (bcrypt) > el hash ficticio no valida ninguna contraseña habitual 1350ms
+ ✓ tests/unit/seguridad.test.js > Contraseñas (bcrypt) > las contraseñas temporales tienen el formato esperado y no se repiten 10ms
+ ✓ tests/unit/seguridad.test.js > Tokens de recuperación > se guarda el SHA-256 del token, nunca el token 2ms
+ ✓ tests/unit/seguridad.test.js > randomDigits (folios y códigos) > genera 1 dígitos sin cero inicial 56ms
+ ✓ tests/unit/seguridad.test.js > randomDigits (folios y códigos) > genera 4 dígitos sin cero inicial 52ms
+ ✓ tests/unit/seguridad.test.js > randomDigits (folios y códigos) > genera 10 dígitos sin cero inicial 57ms
+ ✓ tests/unit/seguridad.test.js > randomDigits (folios y códigos) > reparte los dígitos de forma aproximadamente uniforme 132ms
+
+ Test Files  6 passed (6)
+      Tests  106 passed (106)
+   Start at  22:55:11
+   Duration  7.01s (transform 404ms, setup 0ms, collect 1.63s, tests 4.07s, environment 2ms, prepare 6.13s)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   93.52 |    96.29 |   95.23 |   93.52 |                   
+ server            |     100 |      100 |     100 |     100 |                   
+  ...tmentRules.js |     100 |      100 |     100 |     100 |                   
+  passwords.js     |     100 |      100 |     100 |     100 |                   
+ src/models        |   90.81 |     94.5 |   92.85 |   90.81 |                   
+  ...tmentModel.js |     100 |      100 |     100 |     100 |                   
+  MovementModel.js |     100 |    94.44 |     100 |     100 | 81-82             
+  OrderModel.js    |     100 |      100 |     100 |     100 |                   
+  ProductModel.js  |   74.03 |     90.9 |      80 |   74.03 | 77-103            
+ src/utils         |     100 |      100 |     100 |     100 |                   
+  random.js        |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------

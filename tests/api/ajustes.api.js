@@ -74,7 +74,11 @@ const casos400 = [
   ['API-04', 'Justificación de menos de 10 caracteres', { detalle: 'roto' }, /al menos 10/],
   ['API-05', 'Cantidad 0', { cantidad: 0 }, /entero mayor a 0/],
   ['API-06', 'Descontar más que el stock (stock 1, pide 2)', { productoId: await idDe('HER-BIS-CAN-35') }, /No se puede descontar más/],
-  ['API-07', 'Producto dado de baja', { productoId: 14 }, /no existe o está inactivo/]
+  ['API-07', 'Producto dado de baja', { productoId: 14 }, /no existe o está inactivo/],
+  // PC 12: valores límite superiores (regresión de DEF-15, mismas reglas que el navegador)
+  ['API-14', 'Justificación de 501 caracteres', { detalle: 'x'.repeat(501) }, /no puede superar 500/],
+  ['API-15', 'Cantidad de 100001 unidades', { tipoAjuste: 'SOBRANTE', cantidad: 100001 }, /no puede superar 100000/],
+  ['API-16', 'Motivo de 101 caracteres', { motivo: 'm'.repeat(101) }, /no puede superar 100/]
 ];
 for (const [id, titulo, cambios, patron] of casos400) {
   const r = await ajuste(almacen, { ...valido, ...cambios });
@@ -137,7 +141,8 @@ try {
   await pool.close();
 }
 
-const out = path.resolve('pruebas', 'evidencias', 'pc10');
+// EVIDENCIA_PC permite guardar la ejecución de otra práctica (p. ej. pc12); por defecto pc10
+const out = path.resolve('pruebas', 'evidencias', process.env.EVIDENCIA_PC || 'pc10');
 fs.mkdirSync(out, { recursive: true });
 const file = path.join(out, `api-${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}.json`);
 const resumen = {

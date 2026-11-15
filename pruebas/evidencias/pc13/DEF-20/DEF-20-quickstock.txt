@@ -1,0 +1,11 @@
+DEF-20 - El icono de búsqueda de Consulta Rápida de Stock tapa el texto escrito
+Detectado: PC 11 (revisión visual de capturas); verificado en la PC 13, 2026-11-13.
+Causa: la clase pl-13 no existe en la escala por defecto de Tailwind 3, así que no se
+genera y el campo queda sin relleno izquierdo (padding-left 0 px); el icono (left-4,
+w-6) ocupa hasta 40 px y se superpone al texto.
+Medición con Selenium + Edge 157 (escribiendo "MEL-VES"):
+  antes:   padding-left 0px,  icono hasta 40 px  -> quickstock-antes.png
+  después: padding-left 56px, icono hasta 40 px  -> quickstock-despues.png
+Corrección: pl-14 (3,5 rem) en src/views/QuickStockView.jsx.
+Severidad: Baja | Prioridad: Media | Tipo: Interfaz / accesibilidad (texto oculto)
+Estado: Cerrado (fuera de HU-004; se corrigió por ser de una línea)
