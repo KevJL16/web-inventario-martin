@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { ProductModal } from '../components/catalogo/ProductModal';
 import { VentaModal } from './components/VentaModal';
+import { canSell, hideCostsFor } from '../../shared/roleRules.js';
 
 export const CatalogoView = () => {
   const { products, categories, deleteProduct } = useInventory();
@@ -35,6 +36,8 @@ export const CatalogoView = () => {
 
   // Permisos según RBAC (RF-04)
   const canManageProducts = isAdmin || isAlmacenero;
+  const ocultarCostos = hideCostsFor(currentUser?.rolNombre);
+  const puedeVender = canSell(currentUser?.rolNombre);
 
   // Filtrado y búsqueda reactiva (RF-08)
   const filteredProducts = useMemo(() => {
@@ -100,7 +103,7 @@ export const CatalogoView = () => {
 
         <div className="flex flex-wrap items-center gap-2 shrink-0">
           {/* Botón Acción Rápida: Registrar Venta (Solo Admin y Vendedor) */}
-          {['Administrador', 'Vendedor'].includes(currentUser?.rolNombre) && (
+          {puedeVender && (
             <button
               onClick={() => {
                 setVentaProductTarget(null);
@@ -242,7 +245,10 @@ export const CatalogoView = () => {
                       {/* Costo / Venta */}
                       <td className="py-3.5 px-3 text-right font-mono">
                         <div className="font-bold text-slate-900 text-sm">S/ {prod.precioVenta.toFixed(2)}</div>
-                        <div className="text-[10px] text-slate-400">Costo: S/ {prod.costoCompra.toFixed(2)}</div>
+                        {/* El Vendedor no ve el costo de compra (la API tampoco se lo envía) */}
+                        {!ocultarCostos && Number.isFinite(prod.costoCompra) && (
+                          <div className="text-[10px] text-slate-400">Costo: S/ {prod.costoCompra.toFixed(2)}</div>
+                        )}
                       </td>
 
                       {/* Nivel de Stock y Alertas (RF-09, RF-10) */}
@@ -281,7 +287,7 @@ export const CatalogoView = () => {
                         <div className="flex items-center justify-center space-x-1">
                           
                           {/* Botón Directo: Vender / Despachar (Solo Admin y Vendedor) */}
-                          {['Administrador', 'Vendedor'].includes(currentUser?.rolNombre) && prod.activo && (
+                          {puedeVender && prod.activo && (
                             <button
                               onClick={() => handleVenta(prod)}
                               disabled={prod.stockActual <= 0}

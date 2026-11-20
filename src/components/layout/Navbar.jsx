@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useInventory } from '../../context/InventoryContext';
+import { canAccessModule } from '../../config/modulePermissions';
 import logoMartin from '../../assets/logo_martin.png';
 import { 
   Menu,
@@ -144,15 +145,18 @@ export const Navbar = ({ setActiveTab, openAuthModal, toggleSidebar, isSidebarOp
                             <span className="text-[11px] text-slate-500">
                               Prov: <span className="font-medium text-slate-700">{prod.proveedorNombre}</span>
                             </span>
-                            <button
-                              onClick={() => {
-                                setShowAlerts(false);
-                                setActiveTab('ordenes');
-                              }}
-                              className="text-[11px] font-bold text-martin-orange-600 hover:text-martin-orange-700 underline"
-                            >
-                              Reordenar
-                            </button>
+                            {/* Solo quien gestiona órdenes de compra puede reordenar (el Vendedor solo ve la alerta) */}
+                            {canAccessModule('ordenes', currentUser?.rolNombre) && (
+                              <button
+                                onClick={() => {
+                                  setShowAlerts(false);
+                                  setActiveTab('ordenes');
+                                }}
+                                className="text-[11px] font-bold text-martin-orange-600 hover:text-martin-orange-700 underline"
+                              >
+                                Reordenar
+                              </button>
+                            )}
                           </div>
                         </div>
                       ))

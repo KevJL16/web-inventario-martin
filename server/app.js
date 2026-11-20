@@ -4,6 +4,7 @@ import { CORS_ORIGIN } from './config.js';
 import { getPool, sql } from './db.js';
 import { authRouter, requireAuth } from './auth.js';
 import { adjustmentsRouter } from './adjustments.js';
+import { VENDEDOR_ROLE, canRegisterMovement, hideCostsFor, isSalesOnly } from '../shared/roleRules.js';
 
 // Aplicación Express sin app.listen(): la usan server.js (local) y api/index.js (Vercel)
 const app = express();
@@ -19,6 +20,16 @@ app.use('/api', authRouter);
 
 // A partir de aquí todos los endpoints requieren sesión válida
 app.use('/api', requireAuth);
+
+// Niega una consulta a los roles indicados
+function denyRole(...roles) {
+  return (req, res, next) => {
+    if (roles.includes(req.user?.rolNombre)) {
+      return res.status(403).json({ success: false, message: 'No tiene permisos para esta consulta.' });
+    }
+    next();
+  };
+}
 
 // Ajustes de inventario y mermas justificadas (HU-004)
 app.use('/api', adjustmentsRouter);
@@ -88,7 +99,11 @@ app.get('/api/productos', async (req, res) => {
       WHERE p.Activo = 1
       ORDER BY p.IdProducto;
     `);
-    res.json(result.recordset);
+    // El Vendedor no recibe el costo de compra, solo el precio de venta
+    const productos = hideCostsFor(req.user.rolNombre)
+      ? result.recordset.map(({ costoCompra, ...producto }) => producto)
+      : result.recordset;
+    res.json(productos);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -118,6 +133,7 @@ app.get('/api/movimientos', async (req, res) => {
       FROM MovimientosInventario m
       INNER JOIN Productos p ON m.IdProducto = p.IdProducto
       LEFT JOIN Usuarios u ON m.IdUsuario = u.IdUsuario
+      ${isSalesOnly(req.user.rolNombre) ? "WHERE m.TipoMovimiento = 'SALIDA_VENTA'" : ''}
       ORDER BY m.IdMovimiento DESC;
     `);
     res.json(result.recordset);
@@ -138,7 +154,7 @@ app.get('/api/alertas', async (req, res) => {
 });
 
 // 5. Endpoint para consultar Kardex desde SQL Server
-app.get('/api/kardex', async (req, res) => {
+app.get('/api/kardex', denyRole(VENDEDOR_ROLE), async (req, res) => {
   try {
     const p = await getPool();
     const result = await p.request().query(`
@@ -170,6 +186,10 @@ app.get('/api/kardex', async (req, res) => {
 app.post('/api/movimientos', async (req, res) => {
   try {
     const { sku, tipo, cantidad, costoUnitario, comprobante, observacion } = req.body;
+    // El Vendedor solo registra ventas; compras, mermas y ajustes quedan fuera de su rol
+    if (!canRegisterMovement(req.user.rolNombre, tipo)) {
+      return res.status(403).json({ success: false, message: 'No tiene permisos para registrar este tipo de movimiento.' });
+    }
     // El usuario responsable se toma de la sesión, no del cuerpo de la petición
     const usuarioId = req.user.id;
     const p = await getPool();

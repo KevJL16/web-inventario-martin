@@ -8,6 +8,7 @@ import { Router } from 'express';
 import { getPool, sql } from './db.js';
 import { requireRole } from './auth.js';
 import { validateAdjustmentInput, ADJUSTMENT_ROLES, businessErrorMessage } from './adjustmentRules.js';
+import { ADJUSTMENT_VIEW_ROLES } from '../shared/roleRules.js';
 
 const ADJUSTMENT_COLUMNS = `
   a.IdAjuste AS id,
@@ -41,8 +42,8 @@ const toNumberFields = (row) => ({
 
 export const adjustmentsRouter = Router();
 
-// Historial de ajustes (cualquier usuario con sesión)
-adjustmentsRouter.get('/ajustes', async (req, res) => {
+// Historial de ajustes: Administrador, Gerencia y Almacén (el Vendedor no consulta mermas)
+adjustmentsRouter.get('/ajustes', requireRole(...ADJUSTMENT_VIEW_ROLES), async (req, res) => {
   try {
     const p = await getPool();
     const result = await p.request().query(`

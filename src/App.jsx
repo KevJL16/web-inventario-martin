@@ -78,18 +78,15 @@ class ErrorBoundary extends React.Component {
 
 const MainLayout = () => {
   const { currentUser, authLoading } = useAuth();
-  const [activeTab, setActiveTab] = useState(() => {
-    return currentUser?.rolNombre === 'Vendedor' ? 'catalogo' : 'dashboard';
-  });
+  // Todos los roles, incluido el Vendedor (Dashboard de ventas), empiezan en el Dashboard
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
-  // Restablecer vista inicial según el rol al cambiar de usuario o iniciar sesión
+  // Al cambiar de usuario se vuelve al Dashboard, para no heredar la vista del anterior
   React.useEffect(() => {
-    if (currentUser?.rolNombre === 'Vendedor') {
-      setActiveTab('catalogo');
-    }
-  }, [currentUser?.id, currentUser?.rolNombre]);
+    setActiveTab('dashboard');
+  }, [currentUser?.id]);
 
   // Cerrar menú lateral en móviles al cambiar de pestaña
   React.useEffect(() => {
@@ -127,7 +124,7 @@ const MainLayout = () => {
             Tu perfil de <strong>{rol}</strong> no dispone de privilegios de acceso para este módulo.
           </p>
           <button
-            onClick={() => setActiveTab(rol === 'Vendedor' ? 'catalogo' : 'dashboard')}
+            onClick={() => setActiveTab('dashboard')}
             className="mt-5 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
           >
             Regresar al Inicio
@@ -164,7 +161,7 @@ const MainLayout = () => {
       case 'auditoria':
         return <AuditoriaLogsView />;
       default:
-        return rol === 'Vendedor' ? <CatalogoView /> : <DashboardView setActiveTab={setActiveTab} />;
+        return <DashboardView setActiveTab={setActiveTab} />;
     }
   };
 

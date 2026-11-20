@@ -13,10 +13,13 @@ const ALMACEN = 'Encargado de Almacén';
 const VENDEDOR = 'Vendedor';
 
 export const MODULE_ROLES = Object.freeze({
-  dashboard: [ADMIN, GERENCIA, ALMACEN],
+  // El Vendedor ve un Dashboard de ventas (sin valorización a costo)
+  dashboard: [ADMIN, GERENCIA, ALMACEN, VENDEDOR],
+  // Catálogo: el Vendedor solo consulta y vende; no crea, edita ni da de baja productos
   catalogo: [ADMIN, GERENCIA, ALMACEN, VENDEDOR],
   almacen: [ADMIN, GERENCIA, ALMACEN],
   quickstock: [ADMIN, ALMACEN, VENDEDOR],
+  // Movimientos: el Vendedor solo ve las ventas (la API filtra el resto)
   movimientos: [ADMIN, GERENCIA, ALMACEN, VENDEDOR],
   kardex: [ADMIN, GERENCIA, ALMACEN],
   // HU-004 CA-4: Administrador y Almacén registran; Gerencia solo consulta
