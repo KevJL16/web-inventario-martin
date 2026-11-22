@@ -17,7 +17,7 @@ import { hashPassword, MIN_PASSWORD_LENGTH } from './passwords.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SCRIPTS = ['database/01_ESQUEMA_Y_DATOS.sql', 'database/04_DATOS_PRUEBA.sql'];
-const TEST_ACCOUNTS = ['administrador@rep-martin.com', 'gerencia@rep-martin.com', 'almacen@rep-martin.com'];
+const TEST_ACCOUNTS = ['administrador@rep-martin.com', 'gerencia@rep-martin.com', 'almacen@rep-martin.com', 'vendedor@rep-martin.com'];
 
 const dbName = dbConfig.database;
 const testPassword = process.env.TEST_USER_PASSWORD || '';

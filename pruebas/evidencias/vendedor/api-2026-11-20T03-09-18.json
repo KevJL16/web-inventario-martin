@@ -1,0 +1,114 @@
+{
+  "prueba": "Rol Vendedor - permisos en la API",
+  "url": "http://localhost:5000/api",
+  "fecha": "2026-11-20T03:09:18.159Z",
+  "aprobados": 15,
+  "fallidos": 0,
+  "casos": [
+    {
+      "id": "VEN-01",
+      "titulo": "Inicio de sesión del Vendedor",
+      "esperado": "rol Vendedor",
+      "obtenido": "rol Vendedor",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "VEN-02",
+      "titulo": "Catálogo del Vendedor sin costo de compra",
+      "esperado": "200, precio de venta y sin costoCompra",
+      "obtenido": "200; 13 productos; sin costo: true",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "VEN-03",
+      "titulo": "El Administrador sigue viendo el costo",
+      "esperado": "costoCompra presente",
+      "obtenido": "costo presente: true",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "VEN-04",
+      "titulo": "El Vendedor registra una venta",
+      "esperado": "200 y stock 85 → 83",
+      "obtenido": "200; stock 85 → 83",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "VEN-05",
+      "titulo": "El Vendedor intenta registrar ENTRADA_COMPRA",
+      "esperado": "403 y stock sin cambios",
+      "obtenido": "403; stock 83 → 83",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "VEN-06",
+      "titulo": "El Vendedor intenta registrar MERMA",
+      "esperado": "403 y stock sin cambios",
+      "obtenido": "403; stock 83 → 83",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "VEN-07",
+      "titulo": "El Vendedor intenta registrar AJUSTE_POSITIVO",
+      "esperado": "403 y stock sin cambios",
+      "obtenido": "403; stock 83 → 83",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "VEN-08",
+      "titulo": "El Vendedor intenta registrar AJUSTE_NEGATIVO",
+      "esperado": "403 y stock sin cambios",
+      "obtenido": "403; stock 83 → 83",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "VEN-09",
+      "titulo": "El Vendedor intenta registrar una merma justificada",
+      "esperado": "403",
+      "obtenido": "403; No tiene permisos para esta acción.",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "VEN-10",
+      "titulo": "El Vendedor solo ve ventas en Movimientos",
+      "esperado": "200 y todas SALIDA_VENTA",
+      "obtenido": "200; 4 movimientos; solo ventas: true",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "VEN-11",
+      "titulo": "El Vendedor consulta el Kardex",
+      "esperado": "403",
+      "obtenido": "403",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "VEN-12",
+      "titulo": "El Vendedor consulta el historial de ajustes",
+      "esperado": "403",
+      "obtenido": "403",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "VEN-13",
+      "titulo": "El Vendedor consulta las alertas de stock bajo",
+      "esperado": "200",
+      "obtenido": "200; 4 alertas",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "VEN-14",
+      "titulo": "El Vendedor intenta listar usuarios",
+      "esperado": "403",
+      "obtenido": "403",
+      "estado": "APROBADO"
+    },
+    {
+      "id": "VEN-15",
+      "titulo": "El rol Vendedor está disponible con nivel 4",
+      "esperado": "nivel 4",
+      "obtenido": "nivel 4",
+      "estado": "APROBADO"
+    }
+  ]
+}

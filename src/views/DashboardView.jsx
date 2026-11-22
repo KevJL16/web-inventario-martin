@@ -15,12 +15,21 @@ import {
   Calendar
 } from 'lucide-react';
 import { VentaModal } from './components/VentaModal';
+import { VentasPieChart } from '../components/dashboard/VentasPieChart';
+import { canAccessModule } from '../config/modulePermissions';
+import { canSell, hideCostsFor, isSalesOnly } from '../../shared/roleRules.js';
 
 export const DashboardView = ({ setActiveTab }) => {
   const { products, movements, purchaseOrders, lowStockAlerts, categories } = useInventory();
   const { currentUser } = useAuth();
   const [ventaModalOpen, setVentaModalOpen] = useState(false);
   const [periodo, setPeriodo] = useState('diario'); // 'diario' | 'semanal' | 'mensual' | 'anual'
+
+  const rol = currentUser?.rolNombre;
+  // Dashboard de ventas del Vendedor: sin valorización a costo ni compras, mermas o ajustes
+  const soloVentas = isSalesOnly(rol);
+  const ocultarCostos = hideCostsFor(rol);
+  const visibleMovements = soloVentas ? movements.filter(m => m.tipo === 'SALIDA_VENTA') : movements;
 
   const activeProducts = products.filter(p => p.activo);
   const totalStockUnits = activeProducts.reduce((sum, p) => sum + p.stockActual, 0);
@@ -31,15 +40,15 @@ export const DashboardView = ({ setActiveTab }) => {
 
   // Filtro de movimientos según período seleccionado
   const now = new Date();
-  const todayStr = now.toISOString().slice(0, 10);
 
-  const filteredMovements = movements.filter(m => {
+  const filteredMovements = visibleMovements.filter(m => {
     if (!m.fecha) return false;
     const mDate = new Date(m.fecha);
     if (isNaN(mDate.getTime())) return false;
 
     if (periodo === 'diario') {
-      return m.fecha.startsWith(todayStr);
+      // Día calendario local: comparar con la fecha UTC dejaba "Hoy" vacío desde las 19:00 en Lima
+      return mDate.toDateString() === now.toDateString();
     }
     if (periodo === 'semanal') {
       const diffDays = (now - mDate) / (1000 * 60 * 60 * 24);
@@ -59,6 +68,11 @@ export const DashboardView = ({ setActiveTab }) => {
   const totalEntriesQty = periodEntries.reduce((s, m) => s + (m.cantidad || 0), 0);
   const totalExitsQty = periodExits.reduce((s, m) => s + (m.cantidad || 0), 0);
   const totalValuationPeriod = filteredMovements.reduce((s, m) => s + (m.total || 0), 0);
+
+  // Ventas del período (gráfico de pastel y tarjetas del Vendedor)
+  const periodSales = filteredMovements.filter(m => m.tipo === 'SALIDA_VENTA');
+  const salesAmount = periodSales.reduce((s, m) => s + (Number(m.total) || 0), 0);
+  const salesUnits = periodSales.reduce((s, m) => s + (Number(m.cantidad) || 0), 0);
 
   const periodoLabels = {
     diario: 'Hoy',
@@ -91,7 +105,7 @@ export const DashboardView = ({ setActiveTab }) => {
 
         {/* Acciones Rápidas */}
         <div className="flex flex-wrap items-center gap-2.5">
-          {['Administrador', 'Vendedor'].includes(currentUser?.rolNombre) && (
+          {canSell(rol) && (
             <button
               onClick={() => setVentaModalOpen(true)}
               className="px-4 py-2.5 rounded-xl bg-martin-green-500 hover:bg-martin-green-600 text-white font-bold text-xs transition-colors flex items-center gap-2 shadow-sm cursor-pointer"
@@ -100,14 +114,16 @@ export const DashboardView = ({ setActiveTab }) => {
               <ShoppingCart className="w-4 h-4" /> Registrar Venta
             </button>
           )}
-          {['Administrador', 'Encargado de Almacén'].includes(currentUser?.rolNombre) && (
+          {canAccessModule('quickstock', rol) && (
+            <button
+              onClick={() => setActiveTab('quickstock')}
+              className="px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold text-xs transition-colors flex items-center gap-2 cursor-pointer"
+            >
+              <Zap className="w-4 h-4 text-martin-orange-500" /> Consulta Rápida
+            </button>
+          )}
+          {['Administrador', 'Encargado de Almacén'].includes(rol) && (
             <>
-              <button
-                onClick={() => setActiveTab('quickstock')}
-                className="px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold text-xs transition-colors flex items-center gap-2 cursor-pointer"
-              >
-                <Zap className="w-4 h-4 text-martin-orange-500" /> Consulta Rápida
-              </button>
               <button
                 onClick={() => setActiveTab('ajustes')}
                 className="px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold text-xs transition-colors flex items-center gap-2 cursor-pointer"
@@ -119,7 +135,51 @@ export const DashboardView = ({ setActiveTab }) => {
         </div>
       </div>
 
-      {/* Tarjetas de Métricas Clave (KPIs) */}
+      {/* Tarjetas de Métricas Clave (KPIs). El Vendedor ve indicadores de ventas */}
+      {ocultarCostos ? (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { titulo: 'Ventas del período', valor: `S/ ${salesAmount.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, nota: periodoLabels[periodo], Icono: DollarSign },
+          { titulo: 'Unidades vendidas', valor: salesUnits.toLocaleString('es-PE'), nota: 'Planchas, cajas y unidades', Icono: Package },
+          { titulo: 'Ventas registradas', valor: periodSales.length.toLocaleString('es-PE'), nota: 'Comprobantes emitidos en el período', Icono: ShoppingCart }
+        ].map(({ titulo, valor, nota, Icono }) => (
+          <div key={titulo} className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{titulo}</span>
+              <div className="w-9 h-9 rounded-xl bg-martin-green-50 text-martin-green-700 flex items-center justify-center font-bold">
+                <Icono className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="mt-3">
+              <p className="text-2xl font-black text-slate-900">{valor}</p>
+              <p className="text-xs text-slate-500 mt-1 font-medium">{nota}</p>
+            </div>
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => setActiveTab('catalogo')}
+          className="text-left bg-white rounded-2xl p-5 border border-slate-200 shadow-xs hover:border-martin-orange-500 cursor-pointer transition-colors"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Stock Crítico</span>
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold ${
+              lowStockAlerts.length > 0 ? 'bg-martin-orange-50 text-martin-orange-600' : 'bg-martin-green-50 text-martin-green-700'
+            }`}>
+              <AlertTriangle className="w-5 h-5" />
+            </div>
+          </div>
+          <div className="mt-3">
+            <p className={`text-2xl font-black ${lowStockAlerts.length > 0 ? 'text-martin-orange-600' : 'text-martin-green-700'}`}>
+              {lowStockAlerts.length} {lowStockAlerts.length === 1 ? 'Producto' : 'Productos'}
+            </p>
+            <p className="text-xs text-slate-500 mt-1 font-medium">
+              {lowStockAlerts.length > 0 ? 'Por agotarse: confirme el stock antes de ofrecer' : 'Inventario en niveles óptimos'}
+            </p>
+          </div>
+        </button>
+      </div>
+      ) : (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* KPI 1: Valorización Total */}
@@ -203,6 +263,7 @@ export const DashboardView = ({ setActiveTab }) => {
         </div>
 
       </div>
+      )}
 
       {/* Flujo de Movimientos con Selector de Período */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -211,19 +272,21 @@ export const DashboardView = ({ setActiveTab }) => {
         <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
           
           {/* Header de la sección con selector de período */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-100 gap-3">
+          <div className="flex flex-col xl:flex-row xl:items-center justify-between pb-4 mb-4 border-b border-slate-100 gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-slate-900">Actividad de Movimientos</h2>
+                <h2 className="text-base font-bold text-slate-900">{soloVentas ? 'Actividad de Ventas' : 'Actividad de Movimientos'}</h2>
                 <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-mono">
                   {periodoLabels[periodo]}
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5">Filtrado cronológico de entradas, salidas y transferencias</p>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {soloVentas ? 'Ventas de todo el equipo comercial en el período' : 'Filtrado cronológico de entradas, salidas y transferencias'}
+              </p>
             </div>
 
             {/* Selector de Período: Diarios, Semanales, Mensuales, Anuales */}
-            <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 self-start sm:self-auto overflow-x-auto max-w-full">
+            <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 self-start xl:self-auto overflow-x-auto max-w-full">
               {[
                 { id: 'diario', label: 'Diarios' },
                 { id: 'semanal', label: 'Semanales' },
@@ -252,8 +315,17 @@ export const DashboardView = ({ setActiveTab }) => {
               <span className="text-sm font-black text-slate-900 font-mono">{filteredMovements.length}</span>
             </div>
             <div>
-              <span className="text-[10px] uppercase font-bold text-slate-500 block">Entradas</span>
-              <span className="text-sm font-black text-martin-green-700 font-mono">+{totalEntriesQty} unid.</span>
+              {soloVentas ? (
+                <>
+                  <span className="text-[10px] uppercase font-bold text-slate-500 block">Importe</span>
+                  <span className="text-sm font-black text-martin-green-700 font-mono">S/ {salesAmount.toLocaleString('es-PE', { maximumFractionDigits: 0 })}</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-[10px] uppercase font-bold text-slate-500 block">Entradas</span>
+                  <span className="text-sm font-black text-martin-green-700 font-mono">+{totalEntriesQty} unid.</span>
+                </>
+              )}
             </div>
             <div>
               <span className="text-[10px] uppercase font-bold text-slate-500 block">Salidas</span>
@@ -275,7 +347,7 @@ export const DashboardView = ({ setActiveTab }) => {
 
                 return (
                   <div key={m.id} className="py-3 flex items-center justify-between hover:bg-slate-50/60 rounded-xl px-2 transition-colors">
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3 min-w-0 flex-1">
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
                         esEntrada ? 'bg-martin-green-100 text-martin-green-800' : 'bg-martin-orange-100 text-martin-orange-800'
                       }`}>
@@ -308,13 +380,15 @@ export const DashboardView = ({ setActiveTab }) => {
               onClick={() => setActiveTab('movimientos')}
               className="text-xs font-bold text-martin-green-700 hover:text-martin-green-800 transition-colors inline-flex items-center gap-1 cursor-pointer"
             >
-              Ver Todos los Movimientos →
+              {soloVentas ? 'Ver Todas las Ventas →' : 'Ver Todos los Movimientos →'}
             </button>
           </div>
         </div>
 
-        {/* Columna Derecha: Top Categorías */}
+        {/* Columna Derecha: Productos más vendidos y Top Categorías */}
         <div className="space-y-6">
+
+          <VentasPieChart ventas={periodSales} periodoLabel={periodoLabels[periodo]} />
           
           <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
             <h2 className="text-base font-bold text-slate-900 mb-1">Distribución por Rubro</h2>

@@ -730,7 +730,8 @@ INSERT INTO Roles (NombreRol, Descripcion, NivelJerarquico, PermisosJSON)
 VALUES 
 ('Administrador', 'Control total del sistema, configuración, usuarios y bitácoras', 1, '["ALL"]'),
 ('Gerencia', 'Visualización ejecutiva, reportes financieros, Kardex y rotación ABC', 2, '["READ_ALL", "REPORTS_VIEW", "KARDEX_VIEW", "DASHBOARD_VIEW", "AUDIT_VIEW"]'),
-('Encargado de Almacén', 'Gestión operativa de productos, stock, ubicaciones, recepción y mermas', 3, '["CATALOGO_CRUD", "MOVIMIENTOS_WRITE", "UBICACIONES_VIEW", "AJUSTES_WRITE", "QUICK_STOCK"]');
+('Encargado de Almacén', 'Gestión operativa de productos, stock, ubicaciones, recepción y mermas', 3, '["CATALOGO_CRUD", "MOVIMIENTOS_WRITE", "UBICACIONES_VIEW", "AJUSTES_WRITE", "QUICK_STOCK"]'),
+('Vendedor', 'Atención comercial: consulta el catálogo y el stock, registra ventas y ve el dashboard de ventas', 4, '["CATALOGO_VIEW", "VENTAS_WRITE", "VENTAS_VIEW", "QUICK_STOCK", "ALERTAS_VIEW", "DASHBOARD_VENTAS"]');
 GO
 
 -- Usuarios iniciales (RF-01)
@@ -741,7 +742,8 @@ INSERT INTO Usuarios (IdRol, Nombres, Apellidos, CorreoCorporativo, Telefono, Di
 VALUES
 (1, 'Carlos Eduardo', 'Martín Quispe', 'administrador@rep-martin.com', '987654321', 'Av. Argentina 1850, Lima Industrial', 'HASH_ADMIN_2026', 0, 1),
 (2, 'Patricia Andrea', 'Villanueva Prado', 'gerencia@rep-martin.com', '984512367', 'San Isidro Empresarial', 'HASH_GERENCIA_2026', 0, 1),
-(3, 'Jorge Luis', 'Paredes Soto', 'almacen@rep-martin.com', '991283746', 'Av. Canta Callao 340', 'HASH_ALMACEN_2026', 0, 1);
+(3, 'Jorge Luis', 'Paredes Soto', 'almacen@rep-martin.com', '991283746', 'Av. Canta Callao 340', 'HASH_ALMACEN_2026', 0, 1),
+(4, 'Lucía Fernanda', 'Ramos Castillo', 'vendedor@rep-martin.com', '986741235', 'Av. Arequipa 2450, Lince', 'HASH_VENDEDOR_2026', 0, 1);
 GO
 
 -- Categorías

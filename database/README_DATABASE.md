@@ -20,6 +20,23 @@ Esta base de datos relacional para **SQL Server Management Studio (SSMS)** da so
 
 ---
 
+## 👤 Rol Vendedor y datos de demostración
+
+| Script | Para qué sirve | Dónde |
+| :--- | :--- | :--- |
+| `05_ROL_VENDEDOR.sql` | Crea el rol **Vendedor** (nivel 4) y la cuenta `vendedor@rep-martin.com` en bases ya creadas. Las bases nuevas lo traen desde `01`. | Local y Azure |
+| `06_DATOS_DEMO.sql` | Carga 90 días de ventas, compras de reposición y mermas **ficticias** (y la cuenta `vendedor2@rep-martin.com`) para mostrar el Dashboard y el gráfico de productos más vendidos. | Local y Azure, **nunca** en `_Pruebas` |
+
+- Ambos son un solo lote (sin `GO`): se pueden ejecutar en SSMS o en el editor de consultas del portal de Azure, conectado como administrador (`martinadmin` en Azure). `martin_app` no tiene permisos para crearlos.
+- Son re-ejecutables: `05` no duplica el rol ni la cuenta y `06` no vuelve a cargar datos si ya están (lo marca en la bitácora con `DATOS_DEMO_CARGADOS`).
+- Desde la terminal, con un usuario administrador en `server/.env`: `npm run db:script -- database/05_ROL_VENDEDOR.sql`.
+- Las cuentas nuevas no tienen contraseña utilizable: asígnala con `npm run set-password -- vendedor@rep-martin.com` (o `set-password:azure`).
+- `06` se genera con `npm run db:demo:generar` (`database/herramientas/`): no se edita a mano.
+
+**Permisos del Vendedor:** Dashboard de ventas (sin valorización a costo), Catálogo en consulta y venta (sin costo de compra), Consulta Rápida, Historial de ventas de todo el equipo y alertas de stock bajo. No crea ni edita productos, no registra compras, mermas ni ajustes, y no ve Kardex, ajustes, reportes, usuarios ni bitácora. La API lo aplica con `shared/roleRules.js`, no solo el menú.
+
+---
+
 ## 🗄️ Diccionario de Datos y Mapeo con los Requerimientos Funcionales
 
 | Tabla | Propósito | Requerimientos Asociados |

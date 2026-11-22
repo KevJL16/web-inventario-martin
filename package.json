@@ -13,6 +13,7 @@
     "test": "vitest run",
     "test:cobertura": "vitest run --coverage",
     "test:api": "node --env-file=server/.env.pruebas tests/api/ajustes.api.js",
+    "test:api:vendedor": "node --env-file=server/.env.pruebas tests/api/vendedor.api.js",
     "test:e2e": "node --env-file=server/.env.pruebas tests/e2e/ajustes.e2e.js",
     "test-db": "node server/testConnection.js",
     "db:pruebas:reset": "node --env-file=server/.env.pruebas server/resetTestDb.js",
@@ -22,6 +23,9 @@
     "set-password:azure": "node --env-file=server/.env.azure server/setPassword.js",
     "server": "node server/server.js",
     "set-password": "node server/setPassword.js",
+    "db:script": "node server/runSqlScript.js",
+    "db:script:azure": "node --env-file=server/.env.azure server/runSqlScript.js",
+    "db:demo:generar": "node database/herramientas/generarDatosDemo.mjs",
     "test:a11y": "node --env-file=server/.env.pruebas tests/e2e/accesibilidad.e2e.js",
     "test:lighthouse": "node --env-file=server/.env.pruebas tests/e2e/lighthouse.flow.js",
     "reporte": "node tests/reporte-ejecucion.js"

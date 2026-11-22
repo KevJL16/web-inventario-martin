@@ -13,6 +13,7 @@ import {
   FileText
 } from 'lucide-react';
 import { VentaModal } from './components/VentaModal';
+import { canSell, isSalesOnly } from '../../shared/roleRules.js';
 
 export const MovimientosView = () => {
   const { movements, products, registerMovement } = useInventory();
@@ -23,6 +24,10 @@ export const MovimientosView = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('ALL');
 
+  // El Vendedor solo ve ventas (la API ya filtra; esto cubre los datos guardados en el navegador)
+  const soloVentas = isSalesOnly(currentUser?.rolNombre);
+  const visibleMovements = soloVentas ? movements.filter(m => m.tipo === 'SALIDA_VENTA') : movements;
+
   const [form, setForm] = useState({
     productoId: products.length > 0 ? String(products[0].id) : '',
     tipo: 'ENTRADA_COMPRA',
@@ -32,7 +37,7 @@ export const MovimientosView = () => {
     observacion: ''
   });
 
-  const filteredMovements = movements.filter(m => {
+  const filteredMovements = visibleMovements.filter(m => {
     const matchesSearch =
       (m.productoNombre || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (m.sku || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -93,16 +98,18 @@ export const MovimientosView = () => {
             <span className="text-xs text-slate-500 font-semibold">Auditoría Inalterable de Almacén</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
-            Historial de Movimientos de Inventario
+            {soloVentas ? 'Historial de Ventas' : 'Historial de Movimientos de Inventario'}
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Registro cronológico inmutable de ingresos por compra, salidas por venta, despachos y transferencias de patio.
+            {soloVentas
+              ? 'Ventas registradas por todo el equipo comercial, de la más reciente a la más antigua.'
+              : 'Registro cronológico inmutable de ingresos por compra, salidas por venta, despachos y transferencias de patio.'}
           </p>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
           {/* Registrar Venta: Solo Administrador y Vendedor */}
-          {['Administrador', 'Vendedor'].includes(currentUser?.rolNombre) && (
+          {canSell(currentUser?.rolNombre) && (
             <button
               onClick={() => setVentaModalOpen(true)}
               className="px-4 py-2.5 rounded-xl bg-martin-orange-500 hover:bg-martin-orange-600 text-white text-xs font-bold transition-all shadow-sm flex items-center gap-2 cursor-pointer"
@@ -137,6 +144,7 @@ export const MovimientosView = () => {
           />
         </div>
 
+        {!soloVentas && (
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <span className="text-xs font-semibold text-slate-500 flex items-center gap-1">
             <Filter className="w-3.5 h-3.5" /> Tipo:
@@ -154,6 +162,7 @@ export const MovimientosView = () => {
             <option value="AJUSTE_NEGATIVO">Ajuste Negativo (-)</option>
           </select>
         </div>
+        )}
       </div>
 
       {/* Tabla de Movimientos */}
